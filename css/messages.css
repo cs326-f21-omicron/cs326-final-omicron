@@ -1,0 +1,12 @@
+.noscroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.custom-navbar {
+  height: 72px !important;
+}
+
+.custom-container {
+  height: calc(100% - 72px);
+}
