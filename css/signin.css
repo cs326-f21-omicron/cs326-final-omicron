@@ -4,7 +4,7 @@ body {
 }
 
 .bg-image {
-    background-image: url('../images/landing.jpeg');
+    background-image: url('../images/signin.jpg');
     background-repeat: no-repeat;
     background-size: cover;
 }
