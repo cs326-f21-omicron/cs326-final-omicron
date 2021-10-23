@@ -1,0 +1,9 @@
+html,
+body {
+    height: 100%;
+}
+
+.custom-img {
+    background-repeat: no-repeat;
+    background-size: cover;
+}
