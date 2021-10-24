@@ -17,3 +17,9 @@ The project idea is relatable to several existing social media features. An exam
 # Important Components
 
 The interface will give users a personal account on the website to view their profile page and see listings for people to connect with. We want the profile page to be able to show the user their personal information, friends list, messages, and inputted location or geographic area. Users can send messages to one another as well as form groups amongst mutual friends where will be captioned or labeled by common qualities of the consisting members. We also want to provide the capability for users to filter friend recommendations by setting parameters for a specific search criteria.
+
+# User Interface
+
+- Landing page
+
+![Landing page](images/landing.png)
