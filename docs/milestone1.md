@@ -8,6 +8,18 @@
 - Luke Nguyen ([lukednguyen](https://github.com/lukednguyen))
 - Kirk Smalley ([kjsmalley](https://github.com/kjsmalley))
 
+# Division of labor
+
+| Page                     | Hung Do | Luke Nguyen | Kirk Smalley |
+| ------------------------ | ------- | ----------- | ------------ |
+| Sign up                  | Primary | Cleanup     | N/A          |
+| Login                    | Primary | Cleanup     | N/A          |
+| Messages                 | N/A     | Primary     | N/A          |
+| Landing                  | N/A     | Primary     | N/A          |
+| Home                     | Primary | Cleanup     | N/A          |
+| User info                | N/A     | Cleanup     | Primary      |
+| Recommendations (Backup) | N/A     | Cleanup     | Primary      |
+
 # Innovative idea
 
 Imagine on a beautiful Saturday morning, you wake up and suddenly decide you want to go fishing down at the pond. You don’t want to go alone, but none of your friends like fishing or aren’t available to go in the morning. To help solve this problem we want to make a web application that allows users to get connected with others who enjoy the same pastimes and have aligning attributes. Our idea is to develop an interface where people can provide their hobbies and recreational habits to a site and then be connected with others who share similar skills and preferences.
