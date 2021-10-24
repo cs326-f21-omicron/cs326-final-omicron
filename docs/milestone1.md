@@ -31,4 +31,4 @@ The project idea is relatable to several existing social media features. An exam
 Provide a description and images of the user interface your
 application will intend on supporting.
 
-![camping](images/Camping_1.jpg)
+![camping](cs326-final-omicron/images/Camping_1.jpg)
