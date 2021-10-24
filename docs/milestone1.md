@@ -16,10 +16,10 @@
 | Login                    | Primary | Cleanup     |              |
 | Messages                 |         | Primary     |              |
 | Landing                  |         | Primary     |              |
-| Home                     | Primary | Cleanup     |              |
+| Homepage/Recommendations | Primary | Cleanup     |              |
 | User info                |         | Cleanup     | Primary      |
 | Recommendations (Backup) |         | Cleanup     | Primary      |
-| Readme                   | Yes     | Yes         | Yes          |
+| README                   | Yes     | Yes         | Yes          |
 
 # Innovative idea
 
@@ -56,10 +56,14 @@ The interface will give users a personal account on the website to view their pr
 
 ![Messages page](images/messages.png)
 
-- Recommendation Page
+- Homepage / Recommendations Page
 
-![Rec page](images/reccomendations.png)
+![Home page](images/home.png)
+
+- Recommendations Page (Backup)
+
+![Recommendations page](images/recommendations.png)
 
 - User Info Page
 
-![Rec page](images/userinfo.png)
+![User info page](images/userinfo.png)
