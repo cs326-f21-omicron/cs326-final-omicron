@@ -20,10 +20,11 @@ The interface will give users a personal account on the website to view their pr
 
 # Important Data
 
-- Landing page for users reentering site
-- Homepage/recommendation page that is the default screen for users to see recommendations
-- Message page for users to send messages
-- User profile page for user to see basic information about their profile and other metadata
+- Landing page to welcome users
+- Homepage for the users to see recommendations in their area/recommendations that match their hobbies
+- Messages page that allows 1-1 or group messages
+- User profile page that displays basic user info
+- Signup/Login pages that do what their names say
 
 # User Interface
 
