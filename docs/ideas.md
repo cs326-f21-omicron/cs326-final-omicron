@@ -23,3 +23,7 @@ The interface will give users a personal account on the website to view their pr
 - Landing page
 
 ![Landing page](images/landing.png)
+
+- Signup pages
+
+![Signup page](images/signup.png)

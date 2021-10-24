@@ -27,53 +27,48 @@
     <title>Sign Up</title>
   </head>
   <body>
-    <div class="container-fluid h-100">
+    <div class="container-fluid h-100 user-select-none">
       <div class="row justify-content-center h-100">
         <div class="col-7 bg-image shadow-lg"></div>
         <div class="col-5 d-flex align-items-center justify-content-center">
           <div class="d-flex align-items-center">
             <form style="width: 23rem">
-              <a
-                href="#"
-                class="d-flex align-items-center text-decoration-none mb-4"
-                style="margin-left: -2rem"
-              >
+              <div class="d-flex align-items-center mb-4 me-2">
                 <i class="bi bi-tree-fill" style="font-size: 1.5rem"></i>
                 <span class="fs-4 mx-2 fw-bold">HobbShop</span>
-              </a>
+              </div>
               <h3 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px">
-                Sign Up
+                Join us today
               </h3>
 
               <div class="form-outline mb-4">
+                <label class="form-label" for="email">Email address</label>
                 <input
                   type="email"
-                  id="form2Example18"
+                  id="email"
+                  class="form-control form-control-lg"
+                  placeholder="johndoe@awesome.com"
+                />
+              </div>
+
+              <div class="mb-4">
+                <label for="password" class="form-label">Password</label>
+                <input
+                  type="password"
+                  id="password"
                   class="form-control form-control-lg"
                 />
-                <label class="form-label" for="form2Example18"
-                  >Email address</label
-                >
               </div>
 
               <div class="form-outline mb-4">
-                <input
-                  type="password"
-                  id="form2Example28"
-                  class="form-control form-control-lg"
-                />
-                <label class="form-label" for="form2Example28">Password</label>
-              </div>
-
-              <div class="form-outline mb-4">
-                <input
-                  type="password"
-                  id="form2Example28"
-                  class="form-control form-control-lg"
-                />
-                <label class="form-label" for="form2Example28"
-                  >Repeat your password</label
+                <label class="form-label" for="passwordConfirm"
+                  >Confirm password</label
                 >
+                <input
+                  type="password"
+                  id="passwordConfirm"
+                  class="form-control form-control-lg"
+                />
               </div>
 
               <div class="pt-1 mb-4">
@@ -81,10 +76,13 @@
                   Sign Up
                 </button>
               </div>
-              <p>
+
+              <span>
                 Already have an account?
-                <a href="#!" class="link-info">Login here</a>
-              </p>
+                <a href="#" class="link-info text-decoration-none"
+                  >Login here</a
+                >
+              </span>
             </form>
           </div>
         </div>
