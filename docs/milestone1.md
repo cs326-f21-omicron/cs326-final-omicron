@@ -56,12 +56,10 @@ The interface will give users a personal account on the website to view their pr
 
 ![Messages page](images/messages.png)
 
--Recommendation Page
+- Recommendation Page
 
 ![Rec page](images/reccomendations.png)
 
--User Info Page
+- User Info Page
 
 ![Rec page](images/userinfo.png)
-
-
