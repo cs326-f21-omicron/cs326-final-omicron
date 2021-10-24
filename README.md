@@ -1,3 +1,3 @@
 # _HobbShop_
 
-See [this link](docs/ideas.md)
+[See this link](/docs)
