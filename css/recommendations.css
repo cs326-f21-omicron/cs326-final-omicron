@@ -1,0 +1,10 @@
+.rec-header {
+    border-bottom: 2pt;
+    border-color: blue;
+    border-style: solid;
+}
+
+.filter-border {
+    border-color: blue;
+    border-style: dotted;
+}
