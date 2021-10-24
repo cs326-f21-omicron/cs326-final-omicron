@@ -46,7 +46,7 @@ The interface will give users a personal account on the website to view their pr
 
 -Recommendation Page
 
-![Rec page](images/recommendations.png)
+![Rec page](images/reccommendations.png)
 
 -User Info Page
 
