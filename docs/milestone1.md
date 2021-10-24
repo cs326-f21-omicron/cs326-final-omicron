@@ -4,9 +4,9 @@
 
 # Team Omicron
 
-- Hung Do ([hungmhdo](https://github.com/hungmhdo))
-- Luke Nguyen ([lukednguyen](https://github.com/lukednguyen))
-- Kirk Smalley ([kjsmalley](https://github.com/kjsmalley))
+-   Hung Do ([hungmhdo](https://github.com/hungmhdo))
+-   Luke Nguyen ([lukednguyen](https://github.com/lukednguyen))
+-   Kirk Smalley ([kjsmalley](https://github.com/kjsmalley))
 
 # Division of labor
 
@@ -32,34 +32,33 @@ The interface will give users a personal account on the website to view their pr
 
 # Important Data
 
-- Landing page to welcome users
-- Homepage for the users to see recommendations in their area/recommendations that match their hobbies
-- Messages page that allows 1-1 or group messages
-- User profile page that displays basic user info
-- Signup/Login pages that do what their names say
+-   Authentication: User can create account and login in to an existed account using an email and password. One email can only create one account.
+-   User profile: User can add and change their email, password, username, email, location
+-   Hobbies: User with allow to add hobbies and give them score from 1-10 - which will be the data input to generate their feed. User can also add image for their hobbies to further increase interactivity.
+-   New Feed Generation: User new feed will have all the hobby catagories as they added in their profile. Each of the hobby, they will able to view posts of other people have the same hobby and looking for friends. Hobby score and location will be the most important parameters for this generation.
 
 # User Interface
 
-- Signup page
+-   Signup page
 
 ![Signup page](images/signup.png)
 
-- Login pages
+-   Login pages
 
 ![Login page](images/login.png)
 
-- Landing page
+-   Landing page
 
 ![Landing page](images/landing.png)
 
-- Messages pages
+-   Messages pages
 
 ![Messages page](images/messages.png)
 
-- Recommendation Page
+-   Recommendation Page
 
 ![Rec page](images/reccomendations.png)
 
-- User Info Page
+-   User Info Page
 
 ![Rec page](images/userinfo.png)
