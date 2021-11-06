@@ -24,7 +24,7 @@ app.get('/readInfo/:key', (req, res) => {
 
 app.get('/read_Bio/:key', (req, res) => {
     const userID = req.query.id;
-    const bio = bio[userID].bio;
+    const userBio = bio[userID].bio;
     res.send(`Length of bio paragraph =${bio}`);
 });
 
@@ -47,7 +47,7 @@ app.get('/read_Geo/:key', (req, res) => {
 
   app.get('/read_Interests/:key', (req, res) => {
     const userID = req.query.id;
-    const intersts = intersts[userID].interests;
+    const intersts = interests[userID].interests;
     for(i in intersts) {
         const name = i[0];
         const score = i[1];
@@ -71,7 +71,7 @@ app.get('/read_Geo/:key', (req, res) => {
         res.send(`Added interest ${hobby} with score ${score}`);
         });
 
-        
+
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
+    
 });
