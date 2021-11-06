@@ -5,6 +5,7 @@ app.use(express.json());
 
 const port = 3000;
 
+const userIDs = [];
 const Info = {};
 const Bio = {};
 const Geo = {};
@@ -24,6 +25,7 @@ app.get('users/:userID/createProfile', (req, res) => {
     Geo[userID] = {"city": 'No city provided', "area": 'No area provided'};
     Hobbies[userID] = {"No current hobbies": undefined};
     Interests[userID] = {"No current interests":undefined};
+    userIDs.push(userID);
     res.send(JSON.stringify(`Profile for user ${userID} created`));
 });
 
@@ -101,4 +103,4 @@ app.listen(port, () => {
     
 });
 
-export {BasicInfo, Bio, }
+export {Info, Bio, Geo, Hobbies, Interests, userIDs}
