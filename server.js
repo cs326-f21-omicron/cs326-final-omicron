@@ -1,6 +1,6 @@
 "use strict";
 
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 import express from "express";
 
@@ -10,6 +10,10 @@ app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
+});
+
+app.get("/messages", (req, res) => {
+  res.sendFile("messages.html", { root: "." });
 });
 
 app.get("*", (req, res) => {
