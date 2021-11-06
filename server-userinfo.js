@@ -5,73 +5,100 @@ app.use(express.json());
 
 const port = 3000;
 
-const basicInfo = {};
-const bio = {};
-const geo = {};
-const hobbies = {};
-const interests = {};
+const Info = {};
+const Bio = {};
+const Geo = {};
+const Hobbies = {};
+const Interests = {};
 
 app.get('/', (req, res) => {
-  res.send('Welcome back to your profile!')
+  res.send(JSON.stringify('Welcome back to your profile!'));
 });
 
-app.get('/readInfo/:key', (req, res) => {
-  const userID = req.params.id;
-  const name = basicInfo[userID].name;
-  const email = basicInfo[userID].email
-  res.send(`Name = ${name}, email = ${email}`);
+app.get('users/:userID/createProfile', (req, res) => {
+    const userID = req.params.userID;
+    const name = req.query.name;
+    const email = req.query.email;
+    Info[userID] = {"name": name, "email": email};
+    Bio[userID] = "No biography provided";
+    Geo[userID] = {"city": 'No city provided', "area": 'No area provided'};
+    Hobbies[userID] = {"No current hobbies": undefined};
+    Interests[userID] = {"No current interests":undefined};
+    res.send(JSON.stringify(`Profile for user ${userID} created`));
 });
 
-app.get('/read_Bio/:key', (req, res) => {
-    const userID = req.query.id;
-    const userBio = bio[userID].bio;
-    res.send(`Length of bio paragraph =${bio}`);
+app.get('users/:userID/readInfo', (req, res) => {
+  const userID = req.params.userID;
+  const name = Info[userID].name;
+  const email = Info[userID].email;
+  res.send(JSON.stringify(Info[userID]));
 });
 
-app.get('/read_Geo/:key', (req, res) => {
-    const userID = req.query.id;
-    const city = geo[userID].city;
-    const area = geo[userID].area
-    res.send(`City = ${city}, area = ${area}`);
-  });
+app.post('users/:userID/updateInfo', (req, res) => {
+    const userID = req.params.userID;
+    const name = req.query.name;
+    const email = req.query.email;
+    Info[userID].name = name;
+    Info[userID].email = email;
+    res.send(JSON.stringify(Info[userID]));
+})
 
-  app.get('/read_Hobbies/:key', (req, res) => {
-    const userID = req.query.id;
-    const hobbies = hobbies[userID].hobbies;
-    for(h in hobbies) {
-        const name = h[0];
-        const score = h[1];
-        res.send(`Hobby Name = ${name}, score = ${score}`);
-    }
-  });
+app.get('users/:userID/readBio', (req, res) => {
+    const userID = req.params.userID;
+    const bio = Bio[userID].bio;
+    res.send(JSON.stringify(Bio[userID]));
+});
 
-  app.get('/read_Interests/:key', (req, res) => {
-    const userID = req.query.id;
-    const intersts = interests[userID].interests;
-    for(i in intersts) {
-        const name = i[0];
-        const score = i[1];
-        res.send(`Interst Name = ${name}, score = ${score}`);
-    }
-  });
+app.post('users/:userID/updateBio', (req, res) => {
+    const userID = req.params.userID;
+    const bio = req.query.bio;
+    Bio[userID].bio = bio;
+    res.send(JSON.stringify(Bio[userID]));
+});
 
-    app.post('/add_Hobby', (req, res) => {
-    const userID = req.params.id;
-    const hobby = req.params.hobby;
-    const score = req.params.score;
-    hobbies[userID].push([hobby, score]);
-    res.send(`Added hobby ${hobby} with score ${score}`);
-    });
+app.get('users/:userID/readGeo', (req, res) => {
+    const userID = req.params.userID;
+    const city = Geo[userID].city;
+    const area = Geo[userID].area;
+    res.send(JSON.stringify(Geo[userID]));
+});
 
-    app.post('/add_Hobby', (req, res) => {
-        const userID = req.params.id;
-        const interest = req.params.hobby;
-        const score = req.params.score;
-        hobbies[userID].push([interest, score]);
-        res.send(`Added interest ${hobby} with score ${score}`);
-        });
+app.post('users/:userID/updateGeo', (req, res) => {
+    const userID = req.params.userID;
+    const city = req.query.city;
+    const area = req.query.area;
+    Geo[userID].city = city;
+    Geo[userID].area = area;
+    res.send(JSON.stringify(Geo[userID]));
+});
+
+app.get('users/:userID/readHobbies', (req, res) => {
+    const userID = req.params.userID;
+    const hobbies = Hobbies[userID];
+    res.send(JSON.stringify(hobbies));
+});
+
+app.get('users/:userID/updateHobbies', (req, res) => {
+    const userID = req.params.userID;
+    const hobby = req.query.hobby;
+    const score = req.query.score;
+    const hobbies = Hobbies[userID];
+    hobbies[hobby] = score;
+    res.send(JSON.stringify(Hobbies[userID]));
+});
+
+app.get('users/:userID/deleteHobby', (req, res) => {
+    const userID = req.params.userID;
+    const hobby = req.query.hobby;
+    const hobbies = Hobbies[userID];
+    delete hobbies[hobby];
+    res.send(JSON.stringify(Hobbies[userID]));
+});
+
 
 
 app.listen(port, () => {
     
 });
+
+export {BasicInfo, Bio, }
