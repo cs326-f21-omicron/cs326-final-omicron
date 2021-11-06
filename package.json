@@ -1,0 +1,27 @@
+{
+  "name": "hobbshop",
+  "version": "1.0.0",
+  "description": "Final project for CS326",
+  "main": "server.js",
+  "type": "module",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cs326-f21-omicron/cs326-final-omicron.git"
+  },
+  "author": "Team Omicron",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cs326-f21-omicron/cs326-final-omicron/issues"
+  },
+  "homepage": "https://github.com/cs326-f21-omicron/cs326-final-omicron#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
