@@ -34,6 +34,26 @@
 | mail      | The unique string identifying user's email    | john@awesome.com |
 | password  | The unique string identifying user's password | awesome@john.123 |
 
+**Sample request body**
+
+```json
+{
+  "mail": "johndoe@awesome.com",
+  "password": "John@0123"
+}
+```
+
+**Response**
+
+- **200**: Success
+- **400**: Invalid request body
+  ```json
+  {
+    "message": ""
+  }
+  ```
+- **500**: Internal server error
+
 ## Sign-in API
 
 | METHOD | ACTION                                                                                      |
@@ -44,3 +64,11 @@
 | --------- | --------------------------------------------- | ---------------- |
 | mail      | The unique string identifying user's email    | john@awesome.com |
 | password  | The unique string identifying user's password | awesome@john.123 |
+
+```
+
+```
+
+```
+
+```
