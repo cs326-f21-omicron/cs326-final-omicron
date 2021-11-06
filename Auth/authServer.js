@@ -15,12 +15,12 @@ app.post('/signup', (req, res) => {
   console.log(req.body);
   const { username, password } = req.body;
   if (!username || !password) {
-    res.status(400).send('Missing username or password');
+    res.status(400).send({ message: 'Missing username or password' });
   } else {
     if (addUser(username, password)) {
-      res.status(200).send('User added');
+      res.status(200).send({ message: 'User created' });
     } else {
-      res.status(400).send('User already exists');
+      res.status(400).send({ message: 'User already exists' });
     }
   }
 });
@@ -28,13 +28,13 @@ app.post('/signup', (req, res) => {
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    res.status(400).send('Missing username or password');
+    res.status(400).send({ message: 'Missing username or password' });
   } else {
     const user = findUser(username, password);
     if (user) {
-      res.status(200).send('User logged in');
+      res.status(200).send({ message: 'User logged in', user });
     } else {
-      res.status(401).send('Invalid username or password');
+      res.status(400).send({ message: 'Invalid username or password' });
     }
   }
 });

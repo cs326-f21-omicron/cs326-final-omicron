@@ -1,33 +1,33 @@
 html,
 body {
-    height: 100%;
+  height: 100%;
 }
 
 .custom-img {
-    background-repeat: no-repeat;
-    background-size: cover;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .custom-font {
-    font-size: 1.5em;
+  font-size: 1.5em;
 }
 
 .camping-1 {
-    background-image: url('../images/Camping_1.jpg');
+  background-image: url('../images/Camping_1.jpg');
 }
 
 .camping-2 {
-    background-image: url('../images/Camping_2.jpg');
+  background-image: url('../images/Camping_2.jpg');
 }
 
 .camping-3 {
-    background-image: url('../images/Camping_3.jpg');
+  background-image: url('../images/Camping_3.jpg');
 }
 
 .fishing-1 {
-    background-image: url('../images/Fishing_1.jpg');
+  background-image: url('../images/Fishing_1.jpg');
 }
 
 .fishing-2 {
-    background-image: url('../images/Fishing_2.jpg');
+  background-image: url('../images/Fishing_2.jpg');
 }
