@@ -12,7 +12,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.use(express.static('public'));
+app.use('/images', express.static('images'));
+app.use('/css', express.static('css'));
+app.use('/js', express.static('js'));
 
 // Landing
 
