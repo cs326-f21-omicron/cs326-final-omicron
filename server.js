@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 8080;
 import cors from 'cors';
 import express from 'express';
 import { addUser, findUser } from './Auth/database.js';
+import * as messagesDatabase from './database/messages.js';
 import { getData } from './Suggestion/database.js';
 
 const app = express();
@@ -20,6 +21,44 @@ app.use('/js', express.static('js'));
 
 app.get('/', (req, res) => {
   res.sendFile('landing.html', { root: './html' });
+});
+
+// Messaging
+
+app.get('/messages', (req, res) => {
+  res.sendFile('messages.html', { root: './html' });
+});
+
+app.get('/messages/:messageID', (req, res) => {
+  res.sendFile('messages.html', { root: './html' });
+});
+
+app.get('/user/:userID/chatGroupsList', (req, res) => {
+  const { userID: rawUserID } = req.params;
+  const userID = parseInt(rawUserID);
+  const chatGroupsList =
+    messagesDatabase.getChatGroupsInfoListFromUserID(userID);
+
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(chatGroupsList));
+});
+
+app.get('/chatGroup/:chatGroupID', (req, res) => {
+  const { chatGroupID: rawChatGroupID } = req.params;
+  const chatGroupID = parseInt(rawChatGroupID);
+  const chatGroupInfo = messagesDatabase.getChatGroupInfo(chatGroupID);
+
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(chatGroupInfo));
+});
+
+app.get('/chatGroup/:chatGroupID/messages', (req, res) => {
+  const { chatGroupID: rawChatGroupID } = req.params;
+  const chatGroupID = parseInt(rawChatGroupID);
+  const messages = messagesDatabase.getChatGroupMessages(chatGroupID);
+
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(messages));
 });
 
 // Login
