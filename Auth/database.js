@@ -1,5 +1,5 @@
 import fs from 'fs';
-const JSONfile = './data.json';
+const JSONfile = './Auth/data.json';
 
 const readFile = () => {
   if (fs.existsSync(JSONfile)) {
