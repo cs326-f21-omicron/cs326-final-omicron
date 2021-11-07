@@ -1,5 +1,5 @@
 import fs from 'fs';
-const JSONfile = './data.json';
+const JSONfile = './Suggestion/data.json';
 
 const readFile = () => {
   if (fs.existsSync(JSONfile)) {

@@ -10,7 +10,8 @@ const loadSuggestion = async () => {
       },
     }
   )
-    .then((res) =>
+    .then((res) => {
+      console.log(res.body);
       res.json().then((data) => {
         console.log(data);
         for (let i = 0; i < data.length; i++) {
@@ -92,8 +93,8 @@ const loadSuggestion = async () => {
           `;
           document.getElementById('suggestion').appendChild(suggestionDiv);
         }
-      })
-    )
+      });
+    })
     .catch((err) => console.log(err));
 };
 
