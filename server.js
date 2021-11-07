@@ -4,8 +4,8 @@ const PORT = 8080;
 
 import express from 'express';
 import cors from 'cors';
-import { addUser, findUser } from './Auth/database';
-import { getData } from './Suggestion/database';
+import { addUser, findUser } from './Auth/database.js';
+import { getData } from './Suggestion/database.js';
 
 const app = express();
 
