@@ -22,6 +22,18 @@ app.get('/', (req, res) => {
   res.sendFile('landing.html', { root: './html' });
 });
 
+app.get('/login', (req, res) => {
+  res.sendFile('login.html', { root: './html' });
+});
+
+app.get('/signup', (req, res) => {
+  res.sendFile('signup.html', { root: './html' });
+});
+
+app.get('/home', (req, res) => {
+  res.sendFile('home.html', { root: './html' });
+});
+
 // Login
 
 app.post('/login', (req, res) => {
@@ -41,7 +53,6 @@ app.post('/login', (req, res) => {
 // Signup
 
 app.post('/signup', (req, res) => {
-  console.log(req.body);
   const { username, password } = req.body;
   if (!username || !password) {
     res.status(400).send({ message: 'Missing username or password' });
