@@ -107,7 +107,7 @@
       </header>
 
       <!-- Main part -->
-      <div class="container-fluid custom-container h-100">
+      <div class="container-fluid custom-container">
         <div class="row h-100">
           <!-- Sidebar -->
           <div class="col-3 px-0 h-100">
@@ -129,20 +129,42 @@
               </div>
 
               <!-- Sidebar content -->
-              <div id="sidebarContent"></div>
+              <div
+                id="sidebarContent"
+                class="list-group list-group-flush overflow-auto flex-grow-1"
+              ></div>
             </div>
           </div>
 
           <!-- Messages box -->
-          <div class="col pt-3">
+          <div class="col pt-3 h-100">
             <div class="d-flex flex-column h-100">
-              <div class="overflow-auto flex-grow-1">
-                <div class="d-flex flex-column justify-content-end h-100">
-                  <div id="messagesBoxContent"></div>
-                </div>
+              <div id="messagesBox" class="overflow-scroll flex-grow-1">
+                <div
+                  id="messagesBoxContent"
+                  class="d-flex flex-column-reverse"
+                ></div>
               </div>
 
-              <div id="chatForm"></div>
+              <form id="chatForm">
+                <div class="input-group mb-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Chat Message"
+                    aria-label="Chat Message"
+                    aria-describedby="button-send"
+                    id="chatText"
+                  />
+                  <button
+                    class="btn btn-outline-primary"
+                    type="submit"
+                    id="button-send"
+                  >
+                    <i class="bi bi-arrow-up-circle-fill"></i>
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

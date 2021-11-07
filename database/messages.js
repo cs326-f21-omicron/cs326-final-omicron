@@ -70,6 +70,7 @@ export function getChatGroupsInfoListFromUserID(userID) {
   for (const id of IDsList) {
     list.push(getChatGroupInfo(id));
   }
+  list.sort((a, b) => b.lastMessage?.timestamp - a.lastMessage?.timestamp);
   return list;
 }
 
@@ -91,6 +92,7 @@ export function getChatGroupInfo(chatGroupID) {
             new Date(lastMessage.timestamp),
             { roundingMethod: 'floor' }
           ),
+          timestamp: lastMessage.timestamp,
         },
       };
     }
@@ -112,7 +114,7 @@ export function getChatGroupMessages(chatGroupID) {
       });
     }
   }
-  list.sort((a, b) => a.timestamp - b.timestamp);
+  list.sort((a, b) => b.timestamp - a.timestamp);
   return list;
 }
 

@@ -12,9 +12,6 @@ async function renderMessagesSidebarContent(userID, chatGroupID) {
   for (const chatGroupInfo of data) {
     const chatGroupInfoDiv = document.createElement('div');
     chatGroupInfoDiv.innerHTML = `
-      <div
-        class="list-group list-group-flush overflow-auto flex-grow-1"
-      >
         <a
           href="/messages?id=${chatGroupInfo.id}"
           class="
@@ -23,7 +20,7 @@ async function renderMessagesSidebarContent(userID, chatGroupID) {
             lh-tight
             ${chatGroupID === chatGroupInfo.id ? 'active' : ''}
           "
-          aria-current="true"
+          ${chatGroupID === chatGroupInfo.id ? 'aria-current="true"' : ''}
         >
           <div class="d-flex align-items-center">
             <div class="ms-3 w-100">
@@ -45,13 +42,12 @@ async function renderMessagesSidebarContent(userID, chatGroupID) {
             </div>
           </div>
         </a>
-      </div>
     `;
     sidebarContentDiv.appendChild(chatGroupInfoDiv);
   }
 }
 
-async function renderMessagesBox(userID, chatGroupID) {
+async function renderMessagesBoxContent(userID, chatGroupID) {
   const messagesBoxContentDiv = document.getElementById('messagesBoxContent');
   while (messagesBoxContentDiv.firstChild) {
     messagesBoxContentDiv.removeChild(messagesBoxContentDiv.firstChild);
@@ -84,37 +80,63 @@ async function renderMessagesBox(userID, chatGroupID) {
         `;
     messagesBoxContentDiv.appendChild(messageDiv);
   }
+
+  gotoBottom('messagesBox');
 }
 
-async function renderChatForm(userID, chatGroupID) {
-  const chatFormDiv = document.getElementById('chatForm');
-  console.log(chatFormDiv);
-  chatFormDiv.innerHTML = chatGroupID
-    ? `
-      <div class="input-group mb-3">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Chat Message"
-          aria-label="Chat Message"
-          aria-describedby="button-send"
-        />
-        <button
-          class="btn btn-outline-primary"
-          type="button"
-          id="button-send"
-        >
-          <i class="bi bi-arrow-up-circle-fill"></i>
-        </button>
-      </div>
-    `
-    : '';
+function renderChatForm(userID, chatGroupID) {
+  const chatFormElement = document.getElementById('chatForm');
+  if (!chatGroupID) {
+    chatFormElement.classList.add('d-none');
+  }
 }
 
-window.addEventListener('load', function () {
-  let params = new URL(document.location).searchParams;
+async function postNewMessage(authorID, chatGroupID, text) {
+  const res = await fetch(`/chatGroup/${chatGroupID}/messages/new`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: JSON.stringify({
+      authorID,
+      text,
+    }),
+  });
+  const data = await res.json();
+  // console.log(data);
+  return data;
+}
 
-  renderMessagesSidebarContent('1', params.get('id'));
-  renderMessagesBox('1', params.get('id'));
+function gotoBottom(id) {
+  const element = document.getElementById(id);
+  element.scrollTop = element.scrollHeight - element.clientHeight;
+}
+
+window.addEventListener('load', async function () {
+  const params = new URL(document.location).searchParams;
+
+  await renderMessagesSidebarContent('1', params.get('id'));
+  await renderMessagesBoxContent('1', params.get('id'));
+
   renderChatForm('1', params.get('id'));
 });
+
+document
+  .getElementById('chatForm')
+  .addEventListener('submit', async function (e) {
+    const params = new URL(document.location).searchParams;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const chatText = document.getElementById('chatText').value.trim();
+    if (chatText) {
+      await postNewMessage('1', params.get('id'), chatText);
+
+      await renderMessagesSidebarContent('1', params.get('id'));
+      await renderMessagesBoxContent('1', params.get('id'));
+
+      document.getElementById('chatText').value = '';
+    }
+  });
