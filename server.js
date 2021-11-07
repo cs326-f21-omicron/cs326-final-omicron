@@ -23,6 +23,12 @@ app.get('/', (req, res) => {
   res.sendFile('landing.html', { root: './html' });
 });
 
+// Home
+
+app.get('/home', (req, res) => {
+  res.sendFile('home.html', { root: './html' });
+});
+
 // Messaging
 
 app.get('/messages', (req, res) => {
@@ -59,19 +65,13 @@ app.get('/chatGroup/:chatGroupID/messages', (req, res) => {
 
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(messages));
-app.get('/login', (req, res) => {
-  res.sendFile('login.html', { root: './html' });
-});
-
-app.get('/signup', (req, res) => {
-  res.sendFile('signup.html', { root: './html' });
-});
-
-app.get('/home', (req, res) => {
-  res.sendFile('home.html', { root: './html' });
 });
 
 // Login
+
+app.get('/login', (req, res) => {
+  res.sendFile('login.html', { root: './html' });
+});
 
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
@@ -88,6 +88,10 @@ app.post('/login', (req, res) => {
 });
 
 // Signup
+
+app.get('/signup', (req, res) => {
+  res.sendFile('signup.html', { root: './html' });
+});
 
 app.post('/signup', (req, res) => {
   const { username, password } = req.body;
