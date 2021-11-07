@@ -17,9 +17,10 @@
 | Messages                 |         | Primary     |              |
 | Landing                  |         | Primary     |              |
 | Homepage/Recommendations | Primary | Cleanup     |              |
-| User info                |         | Cleanup     | Primary      |
-| Recommendations (Backup) |         | Cleanup     | Primary      |
-| README                   | Yes     | Yes         | Yes          |
+| Homepage Server          | Primary | Cleanup     |              |
+| User info                |         |             | Primary      |
+| User info-server         |         |             | Primary      |
+| User info-js             |         |             | Primary      |
 
 # API Planning
 
