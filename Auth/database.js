@@ -21,6 +21,7 @@ const checkEmail = (email) => {
 
 export const findUser = (email, password) => {
   const data = readFile();
+  console.log(data);
   for (let i = 0; i < data.length; i += 1) {
     if (data[i].email === email && data[i].password === password) {
       return data[i];
