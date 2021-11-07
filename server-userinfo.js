@@ -1,3 +1,4 @@
+'use strict';
 const express = require('express');
 const app = express();
 
@@ -16,42 +17,44 @@ app.get('/', (req, res) => {
   res.send(JSON.stringify('Welcome back to your profile!'));
 });
 
-app.get('users/:userID/createProfile', (req, res) => {
+app.get('/users/:userID/createProfile', (req, res) => {
     const userID = req.params.userID;
     const name = req.query.name;
     const email = req.query.email;
-    Info[userID] = {"name": name, "email": email};
+    Info[userID] = {name: name, email: email};
     Bio[userID] = "No biography provided";
     Geo[userID] = {"city": 'No city provided', "area": 'No area provided'};
-    Hobbies[userID] = {"No current hobbies": undefined};
-    Interests[userID] = {"No current interests":undefined};
+    Hobbies[userID] = {};
+    Interests[userID] = {};
     userIDs.push(userID);
-    res.send(JSON.stringify(`Profile for user ${userID} created`));
+    res.send(JSON.stringify("Created Profile for user " + userID));
 });
 
-app.get('users/:userID/readInfo', (req, res) => {
+app.get('/users/:userID/readInfo', (req, res) => {
   const userID = req.params.userID;
-  const name = Info[userID].name;
-  const email = Info[userID].email;
   res.send(JSON.stringify(Info[userID]));
 });
 
-app.post('users/:userID/updateInfo', (req, res) => {
+app.post('/users/:userID/updateEmail/:email', (req, res) => {
     const userID = req.params.userID;
-    const name = req.query.name;
-    const email = req.query.email;
-    Info[userID].name = name;
+    const email = req.params.email;
     Info[userID].email = email;
     res.send(JSON.stringify(Info[userID]));
-})
+});
 
-app.get('users/:userID/readBio', (req, res) => {
+app.post('/users/:userID/deleteEmail', (req, res) => {
+    const userID = req.params.userID;
+    Info[userID].email = "No email Provided";
+    res.send(JSON.stringify(Info[userID]));
+});
+
+app.get('/users/:userID/readBio', (req, res) => {
     const userID = req.params.userID;
     const bio = Bio[userID].bio;
     res.send(JSON.stringify(Bio[userID]));
 });
 
-app.post('users/:userID/updateBio', (req, res) => {
+app.post('/users/:userID/updateBio', (req, res) => {
     const userID = req.params.userID;
     const bio = req.query.bio;
     Bio[userID].bio = bio;
@@ -103,4 +106,4 @@ app.listen(port, () => {
     
 });
 
-export {Info, Bio, Geo, Hobbies, Interests, userIDs}
+module.exports = {Info, Bio, Geo, Hobbies, Interests, userIDs};
