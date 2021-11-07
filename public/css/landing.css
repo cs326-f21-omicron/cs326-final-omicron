@@ -4,7 +4,7 @@ body {
 }
 
 .bg-image {
-  background-image: url("../images/landing.jpeg");
+  background-image: url('/images/landing.jpeg');
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
