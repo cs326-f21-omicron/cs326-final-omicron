@@ -35,13 +35,8 @@ app.get('/messages', (req, res) => {
   res.sendFile('messages.html', { root: './html' });
 });
 
-app.get('/messages/:messageID', (req, res) => {
-  res.sendFile('messages.html', { root: './html' });
-});
-
 app.get('/user/:userID/chatGroupsList', (req, res) => {
-  const { userID: rawUserID } = req.params;
-  const userID = parseInt(rawUserID);
+  const { userID } = req.params;
   const chatGroupsList =
     messagesDatabase.getChatGroupsInfoListFromUserID(userID);
 
@@ -50,8 +45,7 @@ app.get('/user/:userID/chatGroupsList', (req, res) => {
 });
 
 app.get('/chatGroup/:chatGroupID', (req, res) => {
-  const { chatGroupID: rawChatGroupID } = req.params;
-  const chatGroupID = parseInt(rawChatGroupID);
+  const { chatGroupID } = req.params;
   const chatGroupInfo = messagesDatabase.getChatGroupInfo(chatGroupID);
 
   res.setHeader('Content-Type', 'application/json');
@@ -59,12 +53,21 @@ app.get('/chatGroup/:chatGroupID', (req, res) => {
 });
 
 app.get('/chatGroup/:chatGroupID/messages', (req, res) => {
-  const { chatGroupID: rawChatGroupID } = req.params;
-  const chatGroupID = parseInt(rawChatGroupID);
+  const { chatGroupID } = req.params;
   const messages = messagesDatabase.getChatGroupMessages(chatGroupID);
 
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(messages));
+});
+
+app.post('/chatGroup/:chatGroupID/messages/new', (req, res) => {
+  const { chatGroupID } = req.params;
+  const { authorID, text } = req.body;
+
+  const data = messagesDatabase.newMessage(chatGroupID, authorID, text);
+
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(data));
 });
 
 // Login

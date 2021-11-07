@@ -1,27 +1,27 @@
 [
   {
-    "id": 1,
-    "chatGroupID": 1,
-    "userID": 1
+    "id": "1",
+    "chatGroupID": "1",
+    "userID": "1"
   },
   {
-    "id": 2,
-    "chatGroupID": 1,
-    "userID": 2
+    "id": "2",
+    "chatGroupID": "1",
+    "userID": "2"
   },
   {
-    "id": 3,
-    "chatGroupID": 2,
-    "userID": 1
+    "id": "3",
+    "chatGroupID": "2",
+    "userID": "1"
   },
   {
-    "id": 4,
-    "chatGroupID": 2,
-    "userID": 2
+    "id": "4",
+    "chatGroupID": "2",
+    "userID": "2"
   },
   {
-    "id": 5,
-    "chatGroupID": 2,
-    "userID": 3
+    "id": "5",
+    "chatGroupID": "2",
+    "userID": "3"
   }
 ]
