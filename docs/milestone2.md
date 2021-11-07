@@ -8,20 +8,6 @@
 - Luke Nguyen ([lukednguyen](https://github.com/lukednguyen))
 - Kirk Smalley ([kjsmalley](https://github.com/kjsmalley))
 
-# Division of labor
-
-| Part                     | Hung Do | Luke Nguyen | Kirk Smalley |
-| ------------------------ | ------- | ----------- | ------------ |
-| Sign up                  | Primary | Cleanup     |              |
-| Login                    | Primary | Cleanup     |              |
-| Messages                 |         | Primary     |              |
-| Landing                  |         | Primary     |              |
-| Homepage/Recommendations | Primary | Cleanup     |              |
-| Homepage Server          | Primary | Cleanup     |              |
-| User info                |         |             | Primary      |
-| User info-server         |         |             | Primary      |
-| User info-js             |         |             | Primary      |
-
 # API Planning
 
 ## Sign-up API
@@ -167,3 +153,23 @@ curl --request GET
   ```
 
 - **500**: Internal server error
+
+# GET /messages
+
+Render Messages page
+
+# GET /user/:userID/chatGroupsList
+
+Get all chat groups that user with userID is in
+
+# GET /chatGroup/:chatGroupID
+
+Get info of chat group with chatGroupID
+
+# GET /chatGroup/:chatGroupID/messages
+
+Get all messages in chat group with chatGroupID
+
+# POST /chatGroup/:chatGroupID/messages/new
+
+Add new message to chat group with chatGroupID
