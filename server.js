@@ -58,9 +58,11 @@ const strategy = new Strategy(async (username, password, done) => {
 
     console.log(username, password, user);
 
-    if (user) {
+    if (user && user.length > 0) {
+      console.log('user found');
       return done(null, username);
     } else {
+      console.log('User not found');
       return done(null, false, { message: 'Incorrect username or password' });
     }
   } catch (err) {
@@ -143,13 +145,10 @@ app.get('/login', (req, res) => {
   res.sendFile('login.html', { root: './html' });
 });
 
-app.post(
-  '/login',
-  passport.authenticate('local', {
-    successRedirect: '/home',
-    failureRedirect: '/register',
-  })
-);
+app.post('/login', passport.authenticate('local'), (req, res) => {
+  console.log('login success');
+  res.sendStatus(200);
+});
 
 // Signup
 

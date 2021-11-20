@@ -21,15 +21,16 @@ window.logIn = async () => {
       password: password,
     }),
   })
-    // .then((res) => {
-    //   if (res.status === 200) {
-    //     // Store the token in local storage
-    //     // window.location.href = '/home';
-    //     console.log(res);
-    //   } else {
-    //     alert('Invalid username or password');
-    //   }
-    // })
+    .then((res) => {
+      if (res.status === 200) {
+        // Store the token in local storage
+        window.location.href = '/home';
+      } else if (res.status === 401) {
+        alert('Wrong username or password');
+      } else {
+        alert('Invalid username or password');
+      }
+    })
     .catch((err) => {
       console.log(err);
     });
