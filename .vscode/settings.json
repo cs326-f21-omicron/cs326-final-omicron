@@ -3,5 +3,6 @@
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
   "prettier.tabWidth": 2,
-  "prettier.singleQuote": true
+  "prettier.singleQuote": true,
+  "cSpell.words": ["resave"]
 }

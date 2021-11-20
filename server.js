@@ -1,14 +1,26 @@
 'use strict';
 
 const PORT = process.env.PORT || 8080;
+// const expressSession = require('express-session');
+// const express = require('express');
+// const cor = require('cors');
 
 import cors from 'cors';
 import express from 'express';
 import { addUser, findUser } from './Auth/database.js';
 import * as messagesDatabase from './database/messages.js';
 import { getData } from './Suggestion/database.js';
+import { MongoClient } from 'mongodb';
+import { Passport } from 'passport';
+import { Strategy } from 'passport-local';
+import session from 'express-session';
 
 const app = express();
+const sessionOption = {
+  secret: process.env.SECRET || 'SECRET', // set this encryption key in Heroku config (never in GitHub)!
+  resave: false,
+  saveUninitialized: false,
+};
 
 app.use(express.json());
 app.use(cors());
@@ -16,6 +28,61 @@ app.use(cors());
 app.use('/images', express.static('images'));
 app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
+
+// Database connection
+const uri =
+  'mongodb+srv://PfJ3mgeu2tfJX3VV:KoQUGpiHwuvBf8hR@cs326-final-omicron.3dn53.mongodb.net/cs326_omicron?retryWrites=true&w=majority';
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+// Authentication
+const passport = new Passport();
+const strategy = new Strategy(async (username, password, done) => {
+  try {
+    // Data validation
+    if (username === '') {
+      return done(null, false, { message: 'Username can not be null' });
+    }
+
+    if (password === '') {
+      return done(null, false, { message: 'Password can not be null' });
+    }
+
+    // Find user in database
+    await client.connect();
+    const database = client.db('cs326_omicron');
+    const userData = database.collection('userData');
+    const user = await userData.find({ username, password }).toArray();
+
+    console.log(username, password, user);
+
+    if (user) {
+      return done(null, username);
+    } else {
+      return done(null, false, { message: 'Incorrect username or password' });
+    }
+  } catch (err) {
+    return done(null, false, err);
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+});
+
+app.use(session(sessionOption));
+passport.use(strategy);
+passport.serializeUser(function (user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function (user, done) {
+  done(null, user);
+});
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Landing
 
@@ -76,19 +143,13 @@ app.get('/login', (req, res) => {
   res.sendFile('login.html', { root: './html' });
 });
 
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
-    res.status(400).send({ message: 'Missing username or password' });
-  } else {
-    const user = findUser(username, password);
-    if (user) {
-      res.status(200).send({ message: 'User logged in', user });
-    } else {
-      res.status(400).send({ message: 'Invalid username or password' });
-    }
-  }
-});
+app.post(
+  '/login',
+  passport.authenticate('local', {
+    successRedirect: '/home',
+    failureRedirect: '/register',
+  })
+);
 
 // Signup
 
