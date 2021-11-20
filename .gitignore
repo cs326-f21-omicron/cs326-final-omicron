@@ -119,3 +119,6 @@ dist
 
 # MacOS crappy file
 .DS_Store
+
+# DB secrets
+DBSecrets.json

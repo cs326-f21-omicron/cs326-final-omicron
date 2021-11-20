@@ -14,6 +14,7 @@ import { MongoClient } from 'mongodb';
 import { Passport } from 'passport';
 import { Strategy } from 'passport-local';
 import session from 'express-session';
+import { DBSecret } from './DBSecret.js';
 
 const app = express();
 const sessionOption = {
@@ -30,8 +31,7 @@ app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
 
 // Database connection
-const uri =
-  'mongodb+srv://PfJ3mgeu2tfJX3VV:KoQUGpiHwuvBf8hR@cs326-final-omicron.3dn53.mongodb.net/cs326_omicron?retryWrites=true&w=majority';
+const uri = `mongodb+srv://${DBSecret.username}:${DBSecret.password}@cs326-final-omicron.3dn53.mongodb.net/${DBSecret.database}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -89,13 +89,22 @@ app.use(passport.session());
 // Landing
 
 app.get('/', (req, res) => {
-  res.sendFile('landing.html', { root: './html' });
+  if (req.isAuthenticated()) {
+    res.redirect('/home');
+  } else {
+    res.sendFile('landing.html', { root: './html' });
+  }
 });
 
 // Home
 
 app.get('/home', (req, res) => {
-  res.sendFile('home.html', { root: './html' });
+  console.log(req.isAuthenticated());
+  if (req.isAuthenticated()) {
+    res.sendFile('home.html', { root: './html' });
+  } else {
+    res.redirect('/login');
+  }
 });
 
 // Messaging
@@ -142,18 +151,25 @@ app.post('/chatGroup/:chatGroupID/messages/new', (req, res) => {
 // Login
 
 app.get('/login', (req, res) => {
-  res.sendFile('login.html', { root: './html' });
+  if (req.isAuthenticated()) {
+    res.redirect('/home');
+  } else {
+    res.sendFile('login.html', { root: './html' });
+  }
 });
 
 app.post('/login', passport.authenticate('local'), (req, res) => {
-  console.log('login success');
-  res.sendStatus(200);
+  res.redirect('/home');
 });
 
 // Signup
 
 app.get('/signup', (req, res) => {
-  res.sendFile('signup.html', { root: './html' });
+  if (req.isAuthenticated()) {
+    res.redirect('/home');
+  } else {
+    res.sendFile('signup.html', { root: './html' });
+  }
 });
 
 app.post('/signup', (req, res) => {
