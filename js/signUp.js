@@ -23,7 +23,7 @@ window.signUp = async () => {
   })
     .then((res) => {
       if (res.status === 200) {
-        window.location.href = './login.html';
+        window.location.href = './login';
       } else {
         alert('Email already exists');
       }

@@ -56,13 +56,9 @@ const strategy = new Strategy(async (username, password, done) => {
     const userData = database.collection('userData');
     const user = await userData.find({ username, password }).toArray();
 
-    console.log(username, password, user);
-
     if (user && user.length > 0) {
-      console.log('user found');
       return done(null, username);
     } else {
-      console.log('User not found');
       return done(null, false, { message: 'Incorrect username or password' });
     }
   } catch (err) {
@@ -99,7 +95,6 @@ app.get('/', (req, res) => {
 // Home
 
 app.get('/home', (req, res) => {
-  console.log(req.isAuthenticated());
   if (req.isAuthenticated()) {
     res.sendFile('home.html', { root: './html' });
   } else {
@@ -172,15 +167,24 @@ app.get('/signup', (req, res) => {
   }
 });
 
-app.post('/signup', (req, res) => {
+app.post('/signup', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     res.status(400).send({ message: 'Missing username or password' });
   } else {
-    if (addUser(username, password)) {
-      res.status(200).send({ message: 'User created' });
-    } else {
-      res.status(400).send({ message: 'User already exists' });
+    try {
+      await client.connect();
+      const database = client.db('cs326_omicron');
+      const userData = database.collection('userData');
+      if ((await userData.find({ username }).toArray().length) > 0) {
+        res.status(400).send({ message: 'Username already exists' });
+      } else {
+        await userData.insertOne({ username, password });
+        res.redirect('/signup');
+        res.status(200).send({ message: 'Signup successful' });
+      }
+    } catch (err) {
+      res.status(400).send({ message: err.message });
     }
   }
 });
