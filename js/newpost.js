@@ -14,6 +14,7 @@ const createNewPost = async (event) => {
   title = document.getElementById('title').value;
   description = document.getElementById('description').value;
   locationn = document.getElementById('locationn').value;
+  category = document.getElementById('category').value;
   if (title === '' || description === '' || location === '') {
     alert('Please fill out all fields');
     return;
@@ -23,6 +24,7 @@ const createNewPost = async (event) => {
     description,
     location: locationn,
     image,
+    category,
   };
   fetch('http://localhost:8080/newpost', {
     method: 'POST',
@@ -49,7 +51,7 @@ window.addEventListener('load', async () => {
   const categorySelect = document.getElementById('category');
   categories.forEach((category) => {
     const option = document.createElement('option');
-    option.value = category.id;
+    option.value = category._id;
     option.innerText =
       category.title.charAt(0).toUpperCase() + category.title.slice(1);
     categorySelect.appendChild(option);

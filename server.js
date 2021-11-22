@@ -219,7 +219,7 @@ app.get('/newpost', (req, res) => {
 });
 
 app.post('/newpost', async (req, res) => {
-  const { title, description, location, image } = req.body;
+  const { title, description, location, image, category } = req.body;
   if (!description || !title || !location || !image) {
     res
       .status(400)
@@ -240,6 +240,11 @@ app.post('/newpost', async (req, res) => {
       user: {
         $ref: 'userData',
         $id: req.user._id,
+        $db: 'cs326_omicron',
+      },
+      category: {
+        $ref: 'categories',
+        $id: category,
         $db: 'cs326_omicron',
       },
     };
