@@ -7,7 +7,6 @@ const PORT = process.env.PORT || 8080;
 
 import cors from 'cors';
 import express from 'express';
-import { addUser, findUser } from './Auth/database.js';
 import * as messagesDatabase from './database/messages.js';
 import { getData } from './Suggestion/database.js';
 import { MongoClient } from 'mongodb';
@@ -15,6 +14,7 @@ import { Passport } from 'passport';
 import { Strategy } from 'passport-local';
 import session from 'express-session';
 import { DBSecret } from './DBSecret.js';
+import bodyParser from 'body-parser';
 
 const app = express();
 const sessionOption = {
@@ -23,8 +23,15 @@ const sessionOption = {
   saveUninitialized: false,
 };
 
-app.use(express.json());
+// app.use(express.json());
 app.use(cors());
+app.use(
+  bodyParser.json({
+    extended: true,
+    parameterLimit: 100000,
+    limit: '50mb',
+  })
+);
 
 app.use('/images', express.static('images'));
 app.use('/css', express.static('css'));
@@ -57,7 +64,7 @@ const strategy = new Strategy(async (username, password, done) => {
     const user = await userData.find({ username, password }).toArray();
 
     if (user && user.length > 0) {
-      return done(null, username);
+      return done(null, user[0]);
     } else {
       return done(null, false, { message: 'Incorrect username or password' });
     }
@@ -199,6 +206,49 @@ app.get('/suggestion', (req, res) => {
   }
 
   res.status(200).send(getData(userId));
+});
+
+app.get('/newpost', (req, res) => {
+  // if (req.isAuthenticated()) {
+  //   res.sendFile('home.html', { root: './html' });
+  // } else {
+  //   res.redirect('/login');
+  // }
+
+  res.sendFile('newpost.html', { root: './html' });
+});
+
+app.post('/newpost', async (req, res) => {
+  const { title, description, location, image } = req.body;
+  if (!description || !title || !location || !image) {
+    res
+      .status(400)
+      .send({ message: 'Missing title, description, location, or image' });
+    return;
+  }
+
+  try {
+    await client.connect();
+    const database = client.db('cs326_omicron');
+    const posts = database.collection('posts');
+    const data = {
+      title,
+      description,
+      location,
+      image,
+      date: new Date(),
+      user: {
+        $ref: 'userData',
+        $id: req.user._id,
+        $db: 'cs326_omicron',
+      },
+    };
+    await posts.insertOne(data);
+    res.status(200).send({ message: 'Post successful' });
+  } catch (err) {
+    res.status(400).send(err.message);
+    return;
+  }
 });
 
 app.listen(PORT, () => {
