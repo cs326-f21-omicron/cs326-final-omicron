@@ -251,6 +251,19 @@ app.post('/newpost', async (req, res) => {
   }
 });
 
+app.get('/categories', async (req, res) => {
+  try {
+    await client.connect();
+    const database = client.db('cs326_omicron');
+    const categories = database.collection('categories');
+    const data = await categories.find().toArray();
+    res.status(200).send(data);
+  } catch (err) {
+    res.status(400).send(err.message);
+    return;
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });

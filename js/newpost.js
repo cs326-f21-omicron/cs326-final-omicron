@@ -44,11 +44,15 @@ const createNewPost = async (event) => {
 };
 
 window.addEventListener('load', async () => {
-  categories = [];
   const response = await fetch('http://localhost:8080/categories');
-  const data = await response.json();
-  data.forEach((category) => {
-    categories.push(category.title);
+  const categories = await response.json();
+  const categorySelect = document.getElementById('category');
+  categories.forEach((category) => {
+    const option = document.createElement('option');
+    option.value = category.id;
+    option.innerText =
+      category.title.charAt(0).toUpperCase() + category.title.slice(1);
+    categorySelect.appendChild(option);
   });
   document.getElementById('file').addEventListener('change', (e) => {
     const file = e.target.files[0];
