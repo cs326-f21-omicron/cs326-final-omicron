@@ -1,18 +1,11 @@
 const loadSuggestion = async () => {
-  // const url = window.location.href;
-  // const id = url.split('?category=');
-  // let data = [];
-  // if (id.length > 1) {
-  //   const response = await fetch(
-  //     `http://localhost:8080/suggestion?categories=${id[1]}`
-  //   );
-  //   const category = await response.json();
-  //   const categoryTitle =
-  //     category.title.charAt(0).toUpperCase() + category.title.slice(1);
-  //   document.getElementById('category').innerText = categoryTitle;
-  // }
-  // console.log(id);
-  fetch('http://localhost:8080/suggestion', {
+  const url = window.location.href;
+  const category = url.split('?category=');
+  let requestUrl = 'http://localhost:8080/suggestion';
+  if (category.length > 1) {
+    requestUrl += '?category=' + category[1];
+  }
+  fetch(requestUrl, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -104,7 +97,9 @@ const loadSuggestion = async () => {
               </div>
 
               <h5 class="text-end mt-3">
-                <a href="#" class="text-decoration-none">More postings</a>
+                <a href="/home?category=${
+                  data[i]._id
+                }" class="text-decoration-none">More postings</a>
               </h5>
           `;
           document.getElementById('suggestion').appendChild(suggestionDiv);

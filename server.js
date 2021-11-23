@@ -203,31 +203,54 @@ app.post('/signup', async (req, res) => {
 // Suggestions
 
 app.get('/suggestion', async (req, res) => {
-  try {
-    await client.connect();
-    const database = client.db('cs326_omicron');
-    const postData = database.collection('posts');
-    const categoryData = database.collection('categories');
-    const userCategories = req.user.categories;
-
-    const data = [];
-
-    for (let i = 0; i < userCategories.length; i++) {
-      console.log(userCategories[i].$id);
-      const categoryPost = await categoryData
-        .find({ _id: ObjectId(userCategories[i].$id) })
+  if (req.query.category) {
+    try {
+      const categoryID = req.query.category;
+      await client.connect();
+      const database = client.db('cs326_omicron');
+      const postData = database.collection('posts');
+      const categoryData = database.collection('categories');
+      const categoryInfo = await categoryData
+        .find({ _id: ObjectId(categoryID) })
         .toArray();
-      data.push(categoryPost[0]);
-      const postList = await postData
-        .find({ 'category.$id': userCategories[i].$id })
+      const data = [];
+      data.push(categoryInfo[0]);
+      const posts = await postData
+        .find({ 'category.$id': categoryID })
         .toArray();
-      data[i].posts = postList;
+      data[0].posts = posts;
+      res.status(200).send(data);
+    } catch (err) {
+      console.log(err);
+      res.status(400).send({ message: err.message });
     }
+  } else {
+    try {
+      await client.connect();
+      const database = client.db('cs326_omicron');
+      const postData = database.collection('posts');
+      const categoryData = database.collection('categories');
+      const userCategories = req.user.categories;
 
-    // console.log(data);
-    res.status(200).send(data);
-  } catch (err) {
-    res.status(400).send({ message: err.message });
+      const data = [];
+
+      for (let i = 0; i < userCategories.length; i++) {
+        const categoryInfo = await categoryData
+          .find({ _id: ObjectId(userCategories[i].$id) })
+          .toArray();
+        data.push(categoryInfo[0]);
+        const postList = await postData
+          .find({ 'category.$id': userCategories[i].$id })
+          .limit(3)
+          .toArray();
+        data[i].posts = postList;
+      }
+
+      // console.log(data);
+      res.status(200).send(data);
+    } catch (err) {
+      res.status(400).send({ message: err.message });
+    }
   }
 });
 
