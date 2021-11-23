@@ -244,7 +244,6 @@ app.get('/suggestion', async (req, res) => {
         data[i].posts = postList;
       }
 
-      // console.log(data);
       res.status(200).send(data);
     } catch (err) {
       res.status(400).send({ message: err.message });
