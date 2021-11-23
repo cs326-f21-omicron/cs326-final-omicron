@@ -8,15 +8,13 @@ const PORT = process.env.PORT || 8080;
 import cors from 'cors';
 import express from 'express';
 import * as messagesDatabase from './database/messages.js';
-import { getData } from './Suggestion/database.js';
 import { MongoClient } from 'mongodb';
 import { Passport } from 'passport';
 import { Strategy } from 'passport-local';
 import session from 'express-session';
 import { DBSecret } from './DBSecret.js';
 import bodyParser from 'body-parser';
-import e from 'cors';
-import { ObjectId, ObjectID } from 'bson';
+import { ObjectId } from 'bson';
 
 const app = express();
 const sessionOption = {
