@@ -15,6 +15,8 @@ import { Strategy } from 'passport-local';
 import session from 'express-session';
 import { DBSecret } from './DBSecret.js';
 import bodyParser from 'body-parser';
+import e from 'cors';
+import { ObjectId, ObjectID } from 'bson';
 
 const app = express();
 const sessionOption = {
@@ -38,7 +40,9 @@ app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
 
 // Database connection
-const uri = `mongodb+srv://${DBSecret.username}:${DBSecret.password}@cs326-final-omicron.3dn53.mongodb.net/${DBSecret.database}?retryWrites=true&w=majority`;
+const uri =
+  process.env.MONGODB_URI ||
+  `mongodb+srv://${DBSecret.username}:${DBSecret.password}@cs326-final-omicron.3dn53.mongodb.net/${DBSecret.database}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -198,14 +202,33 @@ app.post('/signup', async (req, res) => {
 
 // Suggestions
 
-app.get('/suggestion', (req, res) => {
-  const userId = req.query.userId;
-  if (!userId) {
-    res.status(400).send('Missing userId');
-    return;
-  }
+app.get('/suggestion', async (req, res) => {
+  try {
+    await client.connect();
+    const database = client.db('cs326_omicron');
+    const postData = database.collection('posts');
+    const categoryData = database.collection('categories');
+    const userCategories = req.user.categories;
 
-  res.status(200).send(getData(userId));
+    const data = [];
+
+    for (let i = 0; i < userCategories.length; i++) {
+      console.log(userCategories[i].$id);
+      const categoryPost = await categoryData
+        .find({ _id: ObjectId(userCategories[i].$id) })
+        .toArray();
+      data.push(categoryPost[0]);
+      const postList = await postData
+        .find({ 'category.$id': userCategories[i].$id })
+        .toArray();
+      data[i].posts = postList;
+    }
+
+    // console.log(data);
+    res.status(200).send(data);
+  } catch (err) {
+    res.status(400).send({ message: err.message });
+  }
 });
 
 app.get('/newpost', (req, res) => {
@@ -266,6 +289,37 @@ app.get('/categories', async (req, res) => {
   } catch (err) {
     res.status(400).send(err.message);
     return;
+  } finally {
+    client.close();
+  }
+});
+
+app.get('/posts', async (req, res) => {
+  try {
+    await client.connect();
+    const database = client.db('cs326_omicron');
+    const posts = database.collection('posts');
+    const category = req.query.category;
+    if (category) {
+      const data = await posts
+        .find({
+          category: {
+            $ref: 'categories',
+            $id: category,
+            $db: 'cs326_omicron',
+          },
+        })
+        .toArray();
+      res.status(200).send(data);
+    } else {
+      const data = await posts.find().toArray();
+      res.status(200).send(data);
+    }
+  } catch (err) {
+    res.status(400).send(err.message);
+    return;
+  } finally {
+    client.close();
   }
 });
 
