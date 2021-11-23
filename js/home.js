@@ -14,7 +14,6 @@ const loadSuggestion = async () => {
   })
     .then((res) => {
       res.json().then((data) => {
-        console.log(data);
         for (let i = 0; i < data.length; i++) {
           const suggestion = data[i];
           const posts = suggestion.posts;
