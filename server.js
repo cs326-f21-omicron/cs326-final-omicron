@@ -343,6 +343,10 @@ app.get('/posts', async (req, res) => {
   }
 });
 
+app.get('/view', async (req, res) => {
+  res.sendFile('view.html', { root: './html' });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
