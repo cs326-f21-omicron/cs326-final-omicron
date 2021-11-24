@@ -12,22 +12,6 @@ body {
   font-size: 1.5em;
 }
 
-.camping-1 {
-  background-image: url('../images/Camping_1.jpg');
-}
-
-.camping-2 {
-  background-image: url('../images/Camping_2.jpg');
-}
-
-.camping-3 {
-  background-image: url('../images/Camping_3.jpg');
-}
-
-.fishing-1 {
-  background-image: url('../images/Fishing_1.jpg');
-}
-
-.fishing-2 {
-  background-image: url('../images/Fishing_2.jpg');
+.nounderline {
+  text-decoration: none !important;
 }

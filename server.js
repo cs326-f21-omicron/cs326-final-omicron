@@ -14,7 +14,7 @@ import { Strategy } from 'passport-local';
 import session from 'express-session';
 import { DBSecret } from './DBSecret.js';
 import bodyParser from 'body-parser';
-import { ObjectId } from 'bson';
+import { DBRef, ObjectId } from 'bson';
 
 const app = express();
 const sessionOption = {
@@ -320,6 +320,7 @@ app.get('/posts', async (req, res) => {
     const database = client.db('cs326_omicron');
     const posts = database.collection('posts');
     const category = req.query.category;
+    const id = req.query.id;
     if (category) {
       const data = await posts
         .find({
@@ -331,13 +332,24 @@ app.get('/posts', async (req, res) => {
         })
         .toArray();
       res.status(200).send(data);
+    } else if (id) {
+      const data = await posts
+        .find({
+          _id: ObjectId(id),
+        })
+        .toArray();
+      const userData = database.collection('userData');
+      const tmp = data[0].user;
+      const userId = JSON.stringify(tmp).split('"')[7];
+      const user = await userData.find({ _id: ObjectId(userId) }).toArray();
+      data[0].user = user[0];
+      res.status(200).send(data);
     } else {
       const data = await posts.find().toArray();
       res.status(200).send(data);
     }
   } catch (err) {
     res.status(400).send(err.message);
-    return;
   } finally {
     client.close();
   }
