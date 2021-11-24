@@ -201,162 +201,180 @@ app.post('/signup', async (req, res) => {
 // Suggestions
 
 app.get('/suggestion', async (req, res) => {
-  if (req.query.category) {
-    try {
-      const categoryID = req.query.category;
-      await client.connect();
-      const database = client.db('cs326_omicron');
-      const postData = database.collection('posts');
-      const categoryData = database.collection('categories');
-      const categoryInfo = await categoryData
-        .find({ _id: ObjectId(categoryID) })
-        .toArray();
-      const data = [];
-      data.push(categoryInfo[0]);
-      const posts = await postData
-        .find({ 'category.$id': categoryID })
-        .toArray();
-      data[0].posts = posts;
-      res.status(200).send(data);
-    } catch (err) {
-      console.log(err);
-      res.status(400).send({ message: err.message });
+  if (req.isAuthenticated()) {
+    if (req.query.category) {
+      try {
+        const categoryID = req.query.category;
+        await client.connect();
+        const database = client.db('cs326_omicron');
+        const postData = database.collection('posts');
+        const categoryData = database.collection('categories');
+        const categoryInfo = await categoryData
+          .find({ _id: ObjectId(categoryID) })
+          .toArray();
+        const data = [];
+        data.push(categoryInfo[0]);
+        const posts = await postData
+          .find({ 'category.$id': categoryID })
+          .toArray();
+        data[0].posts = posts;
+        res.status(200).send(data);
+      } catch (err) {
+        console.log(err);
+        res.status(400).send({ message: err.message });
+      }
+    } else {
+      try {
+        await client.connect();
+        const database = client.db('cs326_omicron');
+        const postData = database.collection('posts');
+        const categoryData = database.collection('categories');
+        const userCategories = req.user.categories;
+
+        const data = [];
+
+        for (let i = 0; i < userCategories.length; i++) {
+          const categoryInfo = await categoryData
+            .find({ _id: ObjectId(userCategories[i].$id) })
+            .toArray();
+          data.push(categoryInfo[0]);
+          const postList = await postData
+            .find({ 'category.$id': userCategories[i].$id })
+            .limit(3)
+            .toArray();
+          data[i].posts = postList;
+        }
+
+        res.status(200).send(data);
+      } catch (err) {
+        res.status(400).send({ message: err.message });
+      }
     }
   } else {
-    try {
-      await client.connect();
-      const database = client.db('cs326_omicron');
-      const postData = database.collection('posts');
-      const categoryData = database.collection('categories');
-      const userCategories = req.user.categories;
-
-      const data = [];
-
-      for (let i = 0; i < userCategories.length; i++) {
-        const categoryInfo = await categoryData
-          .find({ _id: ObjectId(userCategories[i].$id) })
-          .toArray();
-        data.push(categoryInfo[0]);
-        const postList = await postData
-          .find({ 'category.$id': userCategories[i].$id })
-          .limit(3)
-          .toArray();
-        data[i].posts = postList;
-      }
-
-      res.status(200).send(data);
-    } catch (err) {
-      res.status(400).send({ message: err.message });
-    }
+    res.status(400).send({ message: 'You are not logged in' });
   }
 });
 
 app.get('/newpost', (req, res) => {
-  // if (req.isAuthenticated()) {
-  //   res.sendFile('home.html', { root: './html' });
-  // } else {
-  //   res.redirect('/login');
-  // }
-
-  res.sendFile('newpost.html', { root: './html' });
+  if (req.isAuthenticated()) {
+    res.sendFile('home.html', { root: './html' });
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.post('/newpost', async (req, res) => {
-  const { title, description, location, image, category } = req.body;
-  if (!description || !title || !location || !image) {
-    res
-      .status(400)
-      .send({ message: 'Missing title, description, location, or image' });
-    return;
-  }
+  if (req.isAuthenticated()) {
+    const { title, description, location, image, category } = req.body;
+    if (!description || !title || !location || !image) {
+      res
+        .status(400)
+        .send({ message: 'Missing title, description, location, or image' });
+      return;
+    }
 
-  try {
-    await client.connect();
-    const database = client.db('cs326_omicron');
-    const posts = database.collection('posts');
-    const data = {
-      title,
-      description,
-      location,
-      image,
-      date: new Date(),
-      user: {
-        $ref: 'userData',
-        $id: req.user._id,
-        $db: 'cs326_omicron',
-      },
-      category: {
-        $ref: 'categories',
-        $id: category,
-        $db: 'cs326_omicron',
-      },
-    };
-    await posts.insertOne(data);
-    res.status(200).send({ message: 'Post successful' });
-  } catch (err) {
-    res.status(400).send(err.message);
-    return;
+    try {
+      await client.connect();
+      const database = client.db('cs326_omicron');
+      const posts = database.collection('posts');
+      const data = {
+        title,
+        description,
+        location,
+        image,
+        date: new Date(),
+        user: {
+          $ref: 'userData',
+          $id: req.user._id,
+          $db: 'cs326_omicron',
+        },
+        category: {
+          $ref: 'categories',
+          $id: category,
+          $db: 'cs326_omicron',
+        },
+      };
+      await posts.insertOne(data);
+      res.status(200).send({ message: 'Post successful' });
+    } catch (err) {
+      res.status(400).send(err.message);
+      return;
+    }
+  } else {
+    res.status(400).send({ message: 'Not logged in' });
   }
 });
 
 app.get('/categories', async (req, res) => {
-  try {
-    await client.connect();
-    const database = client.db('cs326_omicron');
-    const categories = database.collection('categories');
-    const data = await categories.find().toArray();
-    res.status(200).send(data);
-  } catch (err) {
-    res.status(400).send(err.message);
-    return;
-  } finally {
-    client.close();
+  if (req.isAuthenticated()) {
+    try {
+      await client.connect();
+      const database = client.db('cs326_omicron');
+      const categories = database.collection('categories');
+      const data = await categories.find().toArray();
+      res.status(200).send(data);
+    } catch (err) {
+      res.status(400).send(err.message);
+      return;
+    } finally {
+      client.close();
+    }
+  } else {
+    res.status(400).send({ message: 'Not logged in' });
   }
 });
 
 app.get('/posts', async (req, res) => {
-  try {
-    await client.connect();
-    const database = client.db('cs326_omicron');
-    const posts = database.collection('posts');
-    const category = req.query.category;
-    const id = req.query.id;
-    if (category) {
-      const data = await posts
-        .find({
-          category: {
-            $ref: 'categories',
-            $id: category,
-            $db: 'cs326_omicron',
-          },
-        })
-        .toArray();
-      res.status(200).send(data);
-    } else if (id) {
-      const data = await posts
-        .find({
-          _id: ObjectId(id),
-        })
-        .toArray();
-      const userData = database.collection('userData');
-      const tmp = data[0].user;
-      const userId = JSON.stringify(tmp).split('"')[7];
-      const user = await userData.find({ _id: ObjectId(userId) }).toArray();
-      data[0].user = user[0];
-      res.status(200).send(data);
-    } else {
-      const data = await posts.find().toArray();
-      res.status(200).send(data);
+  if (req.isAuthenticated()) {
+    try {
+      await client.connect();
+      const database = client.db('cs326_omicron');
+      const posts = database.collection('posts');
+      const category = req.query.category;
+      const id = req.query.id;
+      if (category) {
+        const data = await posts
+          .find({
+            category: {
+              $ref: 'categories',
+              $id: category,
+              $db: 'cs326_omicron',
+            },
+          })
+          .toArray();
+        res.status(200).send(data);
+      } else if (id) {
+        const data = await posts
+          .find({
+            _id: ObjectId(id),
+          })
+          .toArray();
+        const userData = database.collection('userData');
+        const tmp = data[0].user;
+        const userId = JSON.stringify(tmp).split('"')[7];
+        const user = await userData.find({ _id: ObjectId(userId) }).toArray();
+        data[0].user = user[0];
+        res.status(200).send(data);
+      } else {
+        const data = await posts.find().toArray();
+        res.status(200).send(data);
+      }
+    } catch (err) {
+      res.status(400).send(err.message);
+    } finally {
+      client.close();
     }
-  } catch (err) {
-    res.status(400).send(err.message);
-  } finally {
-    client.close();
+  } else {
+    res.status(400).send({ message: 'Not logged in' });
   }
 });
 
 app.get('/view', async (req, res) => {
-  res.sendFile('view.html', { root: './html' });
+  if (req.isAuthenticated()) {
+    res.sendFile('view.html', { root: './html' });
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.listen(PORT, () => {
