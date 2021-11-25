@@ -1,9 +1,6 @@
-'use strict';
-
-const PORT = process.env.PORT || 8080;
-
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import express from 'express';
 import session from 'express-session';
 import http from 'http';
@@ -11,6 +8,11 @@ import { MongoClient, ObjectId } from 'mongodb';
 import { Passport } from 'passport';
 import { Strategy } from 'passport-local';
 import { Server as SocketServer } from "socket.io";
+dotenv.config();
+
+// Config
+
+const PORT = process.env.PORT || 8080;
 
 const sessionOption = {
   secret: process.env.SECRET || 'SECRET',
@@ -108,7 +110,6 @@ const strategy = new Strategy(async (username, password, done) => {
     });
   }
 });
-
 
 passport.use(strategy);
 passport.serializeUser((user, done) => {
