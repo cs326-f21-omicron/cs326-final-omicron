@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Final project for CS326",
   "main": "server.js",
-  "type": "module",
   "directories": {
     "doc": "docs"
   },
@@ -25,6 +24,7 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "date-fns": "^2.25.0",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "mongodb": "^4.2.0",
@@ -32,5 +32,34 @@
     "passport-http": "^0.3.0",
     "passport-local": "^1.0.0",
     "uuid": "^8.3.2"
+  },
+  "type": "module",
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "node": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-var": "error",
+      "eqeqeq": "error",
+      "semi": [
+        "error",
+        "always"
+      ],
+      "curly": [
+        "warn",
+        "all"
+      ],
+      "prefer-const": [
+        "warn",
+        {}
+      ]
+    }
   }
 }

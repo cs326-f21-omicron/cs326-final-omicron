@@ -3,26 +3,25 @@
 const PORT = process.env.PORT || 8080;
 
 import bodyParser from 'body-parser';
-import { ObjectId } from 'bson';
 import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import http from 'http';
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import { Passport } from 'passport';
 import { Strategy } from 'passport-local';
-import * as messagesDatabase from './database/messages.js';
-import { DBSecret } from './DBSecret.js';
+import { Server as SocketServer } from "socket.io";
 
-
-const app = express();
 const sessionOption = {
-  secret: process.env.SECRET || 'SECRET', // set this encryption key in Heroku config (never in GitHub)!
+  secret: process.env.SECRET || 'SECRET',
   resave: false,
   saveUninitialized: false,
 };
 
-// app.use(express.json());
+const app = express();
+const server = http.createServer(app);
+const io = new SocketServer(server);
+
 app.use(cors());
 app.use(
   bodyParser.json({
@@ -39,32 +38,30 @@ app.use('/js', express.static('js'));
 // Database connection
 const uri =
   process.env.MONGODB_URI ||
-  `mongodb+srv://${DBSecret.username}:${DBSecret.password}@cs326-final-omicron.3dn53.mongodb.net/${DBSecret.database}?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, {
+  `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}/${process.env.MONGODB_DATABASE}?retryWrites=true&w=majority`;
+
+const mongoClient = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
 // socket.io
-const server = http.createServer(app);
-const io = new SocketServer(server);
-
 io.on('connection', async socket => {
-    // when user connects
-    console.log(`${socket.id} connected`);
+  // when user connects
+  console.log(`${socket.id} connected`);
 
-    // connect user to all rooms
-    socket.on('join', async ({ userId }) => {
-        const data = await mongoClient.db().collection('users').findOne({
-            _id: ObjectId(userId)
-        });
-        data.rooms?.forEach(room => socket.join(room.toString()));
+  // connect user to all rooms
+  socket.on('join', async ({ userId }) => {
+    const data = await mongoClient.db().collection('users').findOne({
+      _id: ObjectId(userId)
     });
+    data.rooms?.forEach(room => socket.join(room.toString()));
+  });
 
-    // when user disconnects
-    socket.on('disconnect', () => {
-        console.log(`${socket.id} disconnected`);
-    });
+  // when user disconnects
+  socket.on('disconnect', () => {
+    console.log(`${socket.id} disconnected`);
+  });
 });
 
 // Authentication
@@ -81,8 +78,7 @@ const strategy = new Strategy(async (username, password, done) => {
     }
 
     // Find user in database
-    await client.connect();
-    const database = client.db('cs326_omicron');
+    const database = mongoClient.db();
     const userData = database.collection('userData');
     const user = await userData.find({ username, password }).toArray();
 
@@ -93,9 +89,6 @@ const strategy = new Strategy(async (username, password, done) => {
     }
   } catch (err) {
     return done(null, false, err);
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
   }
 });
 
@@ -112,6 +105,7 @@ passport.deserializeUser(function (user, done) {
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 // Landing
 
 app.get('/', (req, res) => {
@@ -121,6 +115,7 @@ app.get('/', (req, res) => {
     res.sendFile('landing.html', { root: './html' });
   }
 });
+
 
 // Home
 
@@ -132,46 +127,6 @@ app.get('/home', (req, res) => {
   }
 });
 
-// Messaging
-
-app.get('/messages', (req, res) => {
-  res.sendFile('messages.html', { root: './html' });
-});
-
-app.get('/user/:userID/chatGroupsList', (req, res) => {
-  const { userID } = req.params;
-  const chatGroupsList =
-    messagesDatabase.getChatGroupsInfoListFromUserID(userID);
-
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(chatGroupsList));
-});
-
-app.get('/chatGroup/:chatGroupID', (req, res) => {
-  const { chatGroupID } = req.params;
-  const chatGroupInfo = messagesDatabase.getChatGroupInfo(chatGroupID);
-
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(chatGroupInfo));
-});
-
-app.get('/chatGroup/:chatGroupID/messages', (req, res) => {
-  const { chatGroupID } = req.params;
-  const messages = messagesDatabase.getChatGroupMessages(chatGroupID);
-
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(messages));
-});
-
-app.post('/chatGroup/:chatGroupID/messages/new', (req, res) => {
-  const { chatGroupID } = req.params;
-  const { authorID, text } = req.body;
-
-  const data = messagesDatabase.newMessage(chatGroupID, authorID, text);
-
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(data));
-});
 
 // Login
 
@@ -186,6 +141,7 @@ app.get('/login', (req, res) => {
 app.post('/login', passport.authenticate('local'), (req, res) => {
   res.redirect('/home');
 });
+
 
 // Signup
 
@@ -203,8 +159,7 @@ app.post('/signup', async (req, res) => {
     res.status(400).send({ message: 'Missing username or password' });
   } else {
     try {
-      await client.connect();
-      const database = client.db('cs326_omicron');
+      const database = mongoClient.db();
       const userData = database.collection('userData');
       if ((await userData.find({ username }).toArray().length) > 0) {
         res.status(400).send({ message: 'Username already exists' });
@@ -226,8 +181,7 @@ app.get('/suggestion', async (req, res) => {
     if (req.query.category) {
       try {
         const categoryID = req.query.category;
-        await client.connect();
-        const database = client.db('cs326_omicron');
+        const database = mongoClient.db();
         const postData = database.collection('posts');
         const categoryData = database.collection('categories');
         const categoryInfo = await categoryData
@@ -246,8 +200,7 @@ app.get('/suggestion', async (req, res) => {
       }
     } else {
       try {
-        await client.connect();
-        const database = client.db('cs326_omicron');
+        const database = mongoClient.db();
         const postData = database.collection('posts');
         const categoryData = database.collection('categories');
         const userCategories = req.user.categories;
@@ -295,8 +248,7 @@ app.post('/newpost', async (req, res) => {
     }
 
     try {
-      await client.connect();
-      const database = client.db('cs326_omicron');
+      const database = mongoClient.db();
       const posts = database.collection('posts');
       const data = {
         title,
@@ -329,16 +281,13 @@ app.post('/newpost', async (req, res) => {
 app.get('/categories', async (req, res) => {
   if (req.isAuthenticated()) {
     try {
-      await client.connect();
-      const database = client.db('cs326_omicron');
+      const database = mongoClient.db();
       const categories = database.collection('categories');
       const data = await categories.find().toArray();
       res.status(200).send(data);
     } catch (err) {
       res.status(400).send(err.message);
       return;
-    } finally {
-      client.close();
     }
   } else {
     res.status(400).send({ message: 'Not logged in' });
@@ -348,8 +297,7 @@ app.get('/categories', async (req, res) => {
 app.get('/posts', async (req, res) => {
   if (req.isAuthenticated()) {
     try {
-      await client.connect();
-      const database = client.db('cs326_omicron');
+      const database = mongoClient.db();
       const posts = database.collection('posts');
       const category = req.query.category;
       const id = req.query.id;
@@ -382,8 +330,6 @@ app.get('/posts', async (req, res) => {
       }
     } catch (err) {
       res.status(400).send(err.message);
-    } finally {
-      client.close();
     }
   } else {
     res.status(400).send({ message: 'Not logged in' });
@@ -399,27 +345,29 @@ app.get('/view', async (req, res) => {
 });
 
 
+// Messaging
+
 app.post('/rooms', async (req, res) => {
   const { name, type } = req.body;
 
   // set up data
   const room = {
-      name,
-      type,
-      messages: [],
-      users: []
+    name,
+    type,
+    messages: [],
+    users: []
   };
 
   try {
-      // add room to collection
-      await mongoClient.db().collection("rooms").insertOne(room);
+    // add room to collection
+    await mongoClient.db().collection("rooms").insertOne(room);
 
-      // return result
-      res.end(JSON.stringify(room ?? {}));
+    // return result
+    res.end(JSON.stringify(room ?? {}));
   }
   catch (err) {
-      console.log(err);
-      res.status(500).end(JSON.stringify({}));
+    console.log(err);
+    res.status(500).end(JSON.stringify({}));
   }
 });
 
@@ -428,18 +376,18 @@ app.get('/rooms/:roomId', async (req, res) => {
   // const { userId } = req.body;
 
   try {
-      // find one room
-      const room = await mongoClient.db().collection('rooms').findOne({
-          _id: ObjectId(roomId),
-          // users: ObjectId(userId)
-      });
+    // find one room
+    const room = await mongoClient.db().collection('rooms').findOne({
+      _id: ObjectId(roomId),
+      // users: ObjectId(userId)
+    });
 
-      // return result
-      res.end(JSON.stringify(room ?? {}));
+    // return result
+    res.end(JSON.stringify(room ?? {}));
   }
   catch (err) {
-      console.log(err);
-      res.status(500).end(JSON.stringify({}));
+    console.log(err);
+    res.status(500).end(JSON.stringify({}));
   }
 });
 
@@ -447,29 +395,29 @@ app.get('/rooms/:roomId/messages', async (req, res) => {
   const { roomId } = req.params;
 
   try {
-      // find one room
-      const room = await mongoClient.db().collection('rooms').findOne({
-          _id: ObjectId(roomId)
+    // find one room
+    const room = await mongoClient.db().collection('rooms').findOne({
+      _id: ObjectId(roomId)
+    });
+
+    // populate messages
+    const messages = room.messages ? await mongoClient.db().collection('messages').find({
+      _id: { $in: room.messages }
+    }).toArray() : [];
+
+    // add user's display name to messages
+    for (const message of messages) {
+      const user = await mongoClient.db().collection('users').findOne({
+        _id: message.user
       });
+      message.userDisplayName = user ? user.name : "Unknown user";
+    }
 
-      // populate messages
-      const messages = room.messages ? await mongoClient.db().collection('messages').find({
-          _id: { $in: room.messages }
-      }).toArray() : [];
-
-      // add user's display name to messages
-      for (const message of messages) {
-          const user = await mongoClient.db().collection('users').findOne({
-              _id: message.user
-          });
-          message.userDisplayName = user ? user.name : "Unknown user";
-      }
-
-      res.end(JSON.stringify(messages ?? []));
+    res.end(JSON.stringify(messages ?? []));
   }
   catch (err) {
-      console.log(err);
-      res.status(500).end(JSON.stringify({}));
+    console.log(err);
+    res.status(500).end(JSON.stringify({}));
   }
 });
 
@@ -477,37 +425,40 @@ app.post('/messages', async (req, res) => {
   const { content, userId, roomId } = req.body;
 
   const message = {
-      content,
-      user: ObjectId(userId),
-      room: ObjectId(roomId),
-      createdAt: Date.now(),
+    content,
+    user: ObjectId(userId),
+    room: ObjectId(roomId),
+    createdAt: Date.now(),
   };
 
   try {
-      // insert message
-      await mongoClient.db().collection('messages').insertOne(message);
+    // insert message
+    await mongoClient.db().collection('messages').insertOne(message);
 
-      // update room
-      await mongoClient.db().collection('rooms').updateOne(
-          { _id: ObjectId(roomId) },
-          { $push: { messages: message._id } }
-      );
+    // update room
+    await mongoClient.db().collection('rooms').updateOne(
+      { _id: ObjectId(roomId) },
+      {
+        $push: { messages: message._id },
+        $set: { lastMessage: message._id }
+      }
+    );
 
-      // get user's display name
-      const user = await mongoClient.db().collection('users').findOne({
-          _id: message.user
-      });
-      message.userDisplayName = user ? user.name : "Unknown user";
+    // get user's display name
+    const user = await mongoClient.db().collection('users').findOne({
+      _id: message.user
+    });
+    message.userDisplayName = user ? user.name : "Unknown user";
 
-      // send update message
-      io.to(roomId).emit('message', JSON.stringify(message));
+    // send update message
+    io.to(roomId).emit('message', JSON.stringify(message));
 
-      // return message data
-      res.end(JSON.stringify(message ?? {}));
+    // return message data
+    res.end(JSON.stringify(message ?? {}));
   }
   catch (err) {
-      console.log(err);
-      res.status(500).end(JSON.stringify({}));
+    console.log(err);
+    res.status(500).end(JSON.stringify({}));
   }
 });
 
@@ -516,25 +467,25 @@ app.post('/rooms/:roomId/users', async (req, res) => {
   const { userId } = req.body;
 
   try {
-      // Add user to room
-      await mongoClient.db().collection('rooms').updateOne({
-          _id: ObjectId(roomId)
-      }, {
-          $push: { users: ObjectId(userId) }
-      });
+    // Add user to room
+    await mongoClient.db().collection('rooms').updateOne({
+      _id: ObjectId(roomId)
+    }, {
+      $push: { users: ObjectId(userId) }
+    });
 
-      // Add room to user
-      await mongoClient.db().collection('users').updateOne({
-          _id: ObjectId(userId)
-      }, {
-          $push: { rooms: ObjectId(roomId) }
-      });
+    // Add room to user
+    await mongoClient.db().collection('users').updateOne({
+      _id: ObjectId(userId)
+    }, {
+      $push: { rooms: ObjectId(roomId) }
+    });
 
-      res.end(JSON.stringify({}));
+    res.end(JSON.stringify({}));
   }
   catch (err) {
-      console.log(err);
-      res.status(500).end(JSON.stringify({}));
+    console.log(err);
+    res.status(500).end(JSON.stringify({}));
   }
 });
 
@@ -543,29 +494,37 @@ app.delete('/rooms/:roomId/users', async (req, res) => {
   const { userId } = req.body;
 
   try {
-      // Remove user from room
-      await mongoClient.db().collection('rooms').updateOne({
-          _id: ObjectId(roomId)
-      }, {
-          $pull: { users: ObjectId(userId) }
-      });
+    // Remove user from room
+    await mongoClient.db().collection('rooms').updateOne({
+      _id: ObjectId(roomId)
+    }, {
+      $pull: { users: ObjectId(userId) }
+    });
 
-      // Remove room from user
-      await mongoClient.db().collection('users').updateOne({
-          _id: ObjectId(userId)
-      }, {
-          $pull: { rooms: ObjectId(roomId) }
-      });
+    // Remove room from user
+    await mongoClient.db().collection('users').updateOne({
+      _id: ObjectId(userId)
+    }, {
+      $pull: { rooms: ObjectId(roomId) }
+    });
 
-      res.end(JSON.stringify({}));
+    res.end(JSON.stringify({}));
   }
   catch (err) {
-      console.log(err);
-      res.status(500).end(JSON.stringify({}));
+    console.log(err);
+    res.status(500).end(JSON.stringify({}));
   }
 });
 
+// Main
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+const main = async () => {
+  await mongoClient.connect();
+  console.log('connected to mongodb');
+
+  server.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
+};
+
+main();
