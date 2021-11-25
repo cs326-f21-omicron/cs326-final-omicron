@@ -18,6 +18,8 @@
 | Create new post          | Primary |             |              |
 | View post                | Primary |             |              |
 | View post by category    | Primary |             |              |
+| UserID's storage   |            |             | Primary       |
+| UserInfo Read/Update |            |             | Primary        |
 
 # Database description
 
@@ -55,3 +57,4 @@ Description: This table stores all the posts.
 | description | String | description of the post            |
 | category    | DBRef  | refer to the category              |
 | user        | DBRef  | refer to the user                  |
+
