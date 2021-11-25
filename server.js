@@ -78,33 +78,41 @@ const strategy = new Strategy(async (username, password, done) => {
     }
 
     // Find user in database
-    const database = mongoClient.db();
-    const userData = database.collection('userData');
-    const user = await userData.find({ username, password }).toArray();
+    const user = await mongoClient.db().collection('users').findOne({
+      username,
+      password
+    });
 
-    if (user && user.length > 0) {
-      return done(null, user[0]);
+    if (user) {
+      return done(null, user);
     } else {
-      return done(null, false, { message: 'Incorrect username or password' });
+      return done(null, false, {
+        message: 'Incorrect username or password'
+      });
     }
   } catch (err) {
-    return done(null, false, err);
+    return done(null, false, {
+      message: 'Error!'
+    });
   }
 });
 
 app.use(session(sessionOption));
+
 passport.use(strategy);
-passport.serializeUser(function (user, done) {
-  done(null, user);
+passport.serializeUser((user, done) => {
+  done(null, user._id);
 });
 
-passport.deserializeUser(function (user, done) {
+passport.deserializeUser(async (userId, done) => {
+  const user = await mongoClient.db().collection('users').findOne({
+    _id: Object(userId)
+  });
   done(null, user);
 });
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 // Landing
 
@@ -155,22 +163,35 @@ app.get('/signup', (req, res) => {
 
 app.post('/signup', async (req, res) => {
   const { username, password } = req.body;
+
+  // input validation
   if (!username || !password) {
     res.status(400).send({ message: 'Missing username or password' });
-  } else {
-    try {
-      const database = mongoClient.db();
-      const userData = database.collection('userData');
-      if ((await userData.find({ username }).toArray().length) > 0) {
-        res.status(400).send({ message: 'Username already exists' });
-      } else {
-        await userData.insertOne({ username, password });
-        res.redirect('/signup');
-        res.status(200).send({ message: 'Signup successful' });
-      }
-    } catch (err) {
-      res.status(400).send({ message: err.message });
+    return;
+  }
+
+  // add user
+  try {
+    const users = mongoClient.db().collection('users');
+
+    // check if username already exists
+    const user = await users.findOne({ username });
+    if (user) {
+      res.status(400).send({ message: 'Username already exists' });
+      return;
     }
+
+    // add user to database
+    await users.insertOne({ username, password });
+
+    res.send({
+      message: 'Signup successful'
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({
+      message: "Error"
+    });
   }
 });
 
@@ -259,12 +280,12 @@ app.post('/newpost', async (req, res) => {
         user: {
           $ref: 'userData',
           $id: req.user._id,
-          $db: 'cs326_omicron',
+          $db: process.env.MONGODB_DATABASE,
         },
         category: {
           $ref: 'categories',
           $id: category,
-          $db: 'cs326_omicron',
+          $db: process.env.MONGODB_DATABASE,
         },
       };
       await posts.insertOne(data);
@@ -307,7 +328,7 @@ app.get('/posts', async (req, res) => {
             category: {
               $ref: 'categories',
               $id: category,
-              $db: 'cs326_omicron',
+              $db: process.env.MONGODB_DATABASE,
             },
           })
           .toArray();
@@ -318,10 +339,10 @@ app.get('/posts', async (req, res) => {
             _id: ObjectId(id),
           })
           .toArray();
-        const userData = database.collection('userData');
+        const users = database.collection('users');
         const tmp = data[0].user;
         const userId = JSON.stringify(tmp).split('"')[7];
-        const user = await userData.find({ _id: ObjectId(userId) }).toArray();
+        const user = await users.find({ _id: ObjectId(userId) }).toArray();
         data[0].user = user[0];
         res.status(200).send(data);
       } else {
@@ -363,11 +384,13 @@ app.post('/rooms', async (req, res) => {
     await mongoClient.db().collection("rooms").insertOne(room);
 
     // return result
-    res.end(JSON.stringify(room ?? {}));
+    res.send(room ?? {});
   }
   catch (err) {
     console.log(err);
-    res.status(500).end(JSON.stringify({}));
+    res.status(500).send({
+      message: "Error"
+    });
   }
 });
 
@@ -383,11 +406,13 @@ app.get('/rooms/:roomId', async (req, res) => {
     });
 
     // return result
-    res.end(JSON.stringify(room ?? {}));
+    res.end(room ?? {});
   }
   catch (err) {
     console.log(err);
-    res.status(500).end(JSON.stringify({}));
+    res.status(500).send({
+      message: "Error"
+    });
   }
 });
 
@@ -413,11 +438,13 @@ app.get('/rooms/:roomId/messages', async (req, res) => {
       message.userDisplayName = user ? user.name : "Unknown user";
     }
 
-    res.end(JSON.stringify(messages ?? []));
+    res.send(messages ?? []);
   }
   catch (err) {
     console.log(err);
-    res.status(500).end(JSON.stringify({}));
+    res.status(500).send({
+      message: "Error"
+    });
   }
 });
 
@@ -454,11 +481,13 @@ app.post('/messages', async (req, res) => {
     io.to(roomId).emit('message', JSON.stringify(message));
 
     // return message data
-    res.end(JSON.stringify(message ?? {}));
+    res.send(message ?? {});
   }
   catch (err) {
     console.log(err);
-    res.status(500).end(JSON.stringify({}));
+    res.status(500).send({
+      message: "Error"
+    });
   }
 });
 
@@ -481,11 +510,13 @@ app.post('/rooms/:roomId/users', async (req, res) => {
       $push: { rooms: ObjectId(roomId) }
     });
 
-    res.end(JSON.stringify({}));
+    res.send({});
   }
   catch (err) {
     console.log(err);
-    res.status(500).end(JSON.stringify({}));
+    res.status(500).send({
+      message: "Error"
+    });
   }
 });
 
@@ -508,11 +539,13 @@ app.delete('/rooms/:roomId/users', async (req, res) => {
       $pull: { rooms: ObjectId(roomId) }
     });
 
-    res.end(JSON.stringify({}));
+    res.send({});
   }
   catch (err) {
     console.log(err);
-    res.status(500).end(JSON.stringify({}));
+    res.status(500).send({
+      message: "Error"
+    });
   }
 });
 
@@ -520,7 +553,7 @@ app.delete('/rooms/:roomId/users', async (req, res) => {
 
 const main = async () => {
   await mongoClient.connect();
-  console.log('connected to mongodb');
+  console.log('Connected to database');
 
   server.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
