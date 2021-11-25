@@ -18,24 +18,9 @@ const sessionOption = {
   saveUninitialized: false,
 };
 
-const app = express();
-const server = http.createServer(app);
-const io = new SocketServer(server);
-
-app.use(cors());
-app.use(
-  bodyParser.json({
-    extended: true,
-    parameterLimit: 100000,
-    limit: '50mb',
-  })
-);
-
-app.use('/images', express.static('images'));
-app.use('/css', express.static('css'));
-app.use('/js', express.static('js'));
 
 // Database connection
+
 const uri =
   process.env.MONGODB_URI ||
   `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}/${process.env.MONGODB_DATABASE}?retryWrites=true&w=majority`;
@@ -45,7 +30,16 @@ const mongoClient = new MongoClient(uri, {
   useUnifiedTopology: true,
 });
 
-// socket.io
+
+// Express
+
+const app = express();
+const server = http.createServer(app);
+const io = new SocketServer(server);
+
+
+// Socket.io
+
 io.on('connection', async socket => {
   // when user connects
   console.log(`${socket.id} connected`);
@@ -63,6 +57,24 @@ io.on('connection', async socket => {
     console.log(`${socket.id} disconnected`);
   });
 });
+
+
+// Express
+
+app.use('/images', express.static('images'));
+app.use('/css', express.static('css'));
+app.use('/js', express.static('js'));
+
+app.use(cors());
+app.use(
+  bodyParser.json({
+    extended: true,
+    parameterLimit: 100000,
+    limit: '50mb',
+  })
+);
+app.use(session(sessionOption));
+
 
 // Authentication
 const passport = new Passport();
@@ -92,12 +104,11 @@ const strategy = new Strategy(async (username, password, done) => {
     }
   } catch (err) {
     return done(null, false, {
-      message: 'Error!'
+      message: 'Error'
     });
   }
 });
 
-app.use(session(sessionOption));
 
 passport.use(strategy);
 passport.serializeUser((user, done) => {
