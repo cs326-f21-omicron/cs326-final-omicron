@@ -10,6 +10,7 @@ import { Strategy } from 'passport-local';
 import { Server as SocketServer } from "socket.io";
 dotenv.config();
 
+
 // Config
 
 const PORT = process.env.PORT || 8080;
@@ -32,7 +33,6 @@ const mongoClient = new MongoClient(uri, {
   useUnifiedTopology: true,
 });
 
-
 // Express
 
 const app = express();
@@ -51,7 +51,7 @@ io.on('connection', async socket => {
     const data = await mongoClient.db().collection('users').findOne({
       _id: ObjectId(userId)
     });
-    data.rooms?.forEach(room => socket.join(room.toString()));
+    data?.rooms?.forEach(room => socket.join(room.toString()));
   });
 
   // when user disconnects
@@ -118,7 +118,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (userId, done) => {
   const user = await mongoClient.db().collection('users').findOne({
-    _id: Object(userId)
+    _id: ObjectId(userId)
   });
   done(null, user);
 });
@@ -236,7 +236,7 @@ app.get('/suggestion', async (req, res) => {
         const database = mongoClient.db();
         const postData = database.collection('posts');
         const categoryData = database.collection('categories');
-        const userCategories = req.user.categories;
+        const userCategories = req.user.categories ?? [];
 
         const data = [];
 
@@ -379,6 +379,14 @@ app.get('/view', async (req, res) => {
 
 
 // Messaging
+
+app.get('/messages', async (req, res) => {
+  // if (req.isAuthenticated()) {
+  res.sendFile('messages.html', { root: './html' });
+  // } else {
+  //   res.redirect('/login');
+  // }
+});
 
 app.post('/rooms', async (req, res) => {
   const { name, type } = req.body;
