@@ -24,6 +24,7 @@ async function updateName() {
     }).then(async res => {
     const profile = await res.json();
     renderProfile(profile);
+    document.getElementById("name-input").value = "";
     });
 }
 
@@ -40,6 +41,7 @@ async function updateBio() {
     }).then(async res => {
     const profile = await res.json();
     renderProfile(profile);
+    document.getElementById("bio-input").value = "";
     });
 }
 
@@ -56,6 +58,7 @@ async function updateCity() {
     }).then(async res => {
     const profile = await res.json();
     renderProfile(profile);
+    document.getElementById("city-input").value = "";
     });
 }
 
@@ -72,6 +75,7 @@ async function updateArea() {
     }).then(async res => {
     const profile = await res.json();
     renderProfile(profile);
+    document.getElementById("area-input").value = "";
     });
 }
 
@@ -89,6 +93,7 @@ async function addHobby() {
     }).then(async res => {          
     const profile = await res.json();
     renderProfile(profile);
+    document.getElementById("hobby-add-input").value = "";
     });
 }
 
@@ -105,6 +110,7 @@ async function removeHobby() {
     });                     
     const profile = await prom.json();
     renderProfile(profile);
+    document.getElementById("hobby-remove-input").value = "";
 }
 
 async function addInterest() {
@@ -121,6 +127,7 @@ async function addInterest() {
     }).then(async res => {          
     const profile = await res.json();
     renderProfile(profile);
+    document.getElementById("interest-add-input").value = "";
     });
 }
 
@@ -137,6 +144,7 @@ async function removeInterest() {
     });                     
     const profile = await prom.json();
     renderProfile(profile);
+    document.getElementById("interest-remove-input").value = "";
 }
 
 async function resetProfile() {
