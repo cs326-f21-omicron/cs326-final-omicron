@@ -1,7 +1,7 @@
 const getPost = () => {
   if (window.location.href.includes('/view?id=')) {
     const postId = window.location.href.split('/view?id=')[1];
-    fetch('http://localhost:8080/posts?id=' + postId, {
+    fetch('/posts?id=' + postId, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

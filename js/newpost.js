@@ -9,24 +9,26 @@ const imgToBase64 = (img) => {
   });
 };
 
-const createNewPost = async (event) => {
-  event.preventDefault();
-  title = document.getElementById('title').value;
-  description = document.getElementById('description').value;
-  locationn = document.getElementById('locationn').value;
-  category = document.getElementById('category').value;
+const createNewPost = async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const title = document.getElementById('title').value;
+  const description = document.getElementById('description').value;
+  const locationn = document.getElementById('locationn').value;
+  const category = document.getElementById('category').value;
   if (title === '' || description === '' || location === '') {
     alert('Please fill out all fields');
     return;
   }
-  data = {
+  const data = {
     title,
     description,
     location: locationn,
     image,
     category,
   };
-  fetch('http://localhost:8080/newpost', {
+  fetch('/newpost', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -35,7 +37,6 @@ const createNewPost = async (event) => {
     body: JSON.stringify(data),
   }).then((res) => {
     if (res.status === 200) {
-      // Store the token in local storage
       alert('Post created successfully');
       window.location.href = '/home';
     } else {
@@ -46,7 +47,7 @@ const createNewPost = async (event) => {
 };
 
 window.addEventListener('load', async () => {
-  const response = await fetch('http://localhost:8080/categories');
+  const response = await fetch('/categories');
   const categories = await response.json();
   const categorySelect = document.getElementById('category');
   categories.forEach((category) => {

@@ -1,6 +1,6 @@
 const loadSuggestion = async () => {
   fetch(
-    'http://localhost:8080/suggestion?userId=' + 'uy312afbnw231oapqks31lap312',
+    '/suggestion?userId=' + 'uy312afbnw231oapqks31lap312',
     {
       method: 'GET',
       headers: {

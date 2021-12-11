@@ -1,7 +1,7 @@
 const loadSuggestion = async () => {
   const url = window.location.href;
   const category = url.split('?category=');
-  let requestUrl = 'http://localhost:8080/suggestion';
+  let requestUrl = '/suggestion';
   if (category.length > 1) {
     requestUrl += '?category=' + category[1];
   }

@@ -25,11 +25,6 @@ app.get('/suggestion', (req, res) => {
   res.status(200).send(getData(userId));
 });
 
-app.get('*', (req, res) => {
-  // Try it...
-  res.redirect('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
-});
-
 app.listen(PORT, () => {
-  console.log(`Server listening at http://localhost:${PORT}`);
+  console.log(`Server listening at port ${PORT}`);
 });
