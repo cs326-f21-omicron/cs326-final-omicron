@@ -33,7 +33,7 @@
         <div class="col-7 bg-image shadow-lg"></div>
         <div class="col-5 d-flex align-items-center justify-content-center">
           <div class="d-flex align-items-center">
-            <form class="custom-width">
+            <form class="custom-width" id="form">
               <div class="d-flex align-items-center mb-4 me-2">
                 <i class="bi bi-tree-fill custom-font"></i>
                 <span class="fs-4 mx-2 fw-bold">HobbShop</span>
@@ -47,7 +47,7 @@
                   type="email"
                   id="email"
                   class="form-control form-control-lg"
-                  placeholder="johndoe@awesome.com"
+                  placeholder="awesome@hobbshop.com"
                 />
               </div>
 
@@ -69,8 +69,7 @@
               <div class="pt-1 mb-4">
                 <button
                   class="btn btn-primary btn-lg btn-block"
-                  type="button"
-                  onclick="logIn()"
+                  type="submit"
                 >
                   Login
                 </button>
@@ -78,9 +77,7 @@
 
               <p>
                 Don't have an account?
-                <a href="/signup" class="link-info text-decoration-none">
-                  >Register here</a
-                >
+                <a href="/signup" class="link-info text-decoration-none">Register here</a>
               </p>
             </form>
           </div>

@@ -24,7 +24,7 @@
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
       crossorigin="anonymous"
     ></script>
-    <script src="/js/signUp.js"></script>
+    <script src="/js/signup.js"></script>
     <title>Sign Up</title>
   </head>
   <body>
@@ -33,7 +33,7 @@
         <div class="col-7 bg-image shadow-lg"></div>
         <div class="col-5 d-flex align-items-center justify-content-center">
           <div class="d-flex align-items-center">
-            <form class="custom-width">
+            <form class="custom-width" id="form">
               <div class="d-flex align-items-center mb-4 me-2">
                 <i class="bi bi-tree-fill custom-font"></i>
                 <span class="fs-4 mx-2 fw-bold">HobbShop</span>
@@ -46,7 +46,7 @@
                   type="email"
                   id="email"
                   class="form-control form-control-lg"
-                  placeholder="johndoe@awesome.com"
+                  placeholder="awesome@hobbshop.com"
                 />
               </div>
 
@@ -73,8 +73,7 @@
               <div class="pt-1 mb-4">
                 <button
                   class="btn btn-primary btn-lg btn-block"
-                  type="button"
-                  onclick="signUp()"
+                  type="submit"
                 >
                   Sign Up
                 </button>

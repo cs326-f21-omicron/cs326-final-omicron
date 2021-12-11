@@ -8,6 +8,9 @@ import { MongoClient, ObjectId } from 'mongodb';
 import { Passport } from 'passport';
 import { Strategy } from 'passport-local';
 import { Server as SocketServer } from "socket.io";
+
+// this is to load the env file on local environment
+
 dotenv.config();
 
 
@@ -16,7 +19,7 @@ dotenv.config();
 const PORT = process.env.PORT || 8080;
 
 const sessionOption = {
-  secret: process.env.SECRET || 'SECRET',
+  secret: process.env.SECRET || 'SECRETTTTTT',
   resave: false,
   saveUninitialized: false,
 };
@@ -112,6 +115,7 @@ const strategy = new Strategy(async (username, password, done) => {
 });
 
 passport.use(strategy);
+
 passport.serializeUser((user, done) => {
   done(null, user._id);
 });
@@ -120,6 +124,8 @@ passport.deserializeUser(async (userId, done) => {
   const user = await mongoClient.db().collection('users').findOne({
     _id: ObjectId(userId)
   });
+  // just to be really safe
+  delete user.password;
   done(null, user);
 });
 
@@ -205,6 +211,13 @@ app.post('/signup', async (req, res) => {
       message: "Error"
     });
   }
+});
+
+// Logout
+
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
 });
 
 // Suggestions
@@ -567,6 +580,10 @@ app.delete('/rooms/:roomId/users', async (req, res) => {
       message: "Error"
     });
   }
+});
+
+app.get('/currentUser', async (req, res) => {
+  res.send(req.user);
 });
 
 // Main
