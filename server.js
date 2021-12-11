@@ -269,7 +269,7 @@ app.get('/suggestion', async (req, res) => {
 
 app.get('/newpost', (req, res) => {
     if (req.isAuthenticated()) {
-        res.sendFile('home.html', { root: './html' });
+        res.sendFile('newpost.html', { root: './html' });
     } else {
         res.redirect('/login');
     }
@@ -313,6 +313,41 @@ app.post('/newpost', async (req, res) => {
         }
     } else {
         res.status(400).send({ message: 'Not logged in' });
+    }
+});
+
+app.get('/editpost', async (req, res) => {
+    if (req.isAuthenticated()) {
+        if (req.query.id && req.query.id.length === 24) {
+            const id = req.query.id;
+            const post = await mongoClient
+                .db()
+                .collection('posts')
+                .findOne({
+                    _id: ObjectId(id),
+                });
+            if (
+                post === null ||
+                post === undefined ||
+                post.length === 0 ||
+                Object.keys(post).length === 0
+            ) {
+                res.redirect('/newpost');
+                return;
+            }
+
+            const user = post.user;
+            const userId = JSON.stringify(user).split('"')[7];
+            if (req.user._id.toString() === userId.toString()) {
+                res.sendFile('editpost.html', { root: './html' });
+            } else {
+                res.redirect('/newpost');
+            }
+        } else {
+            res.redirect('/newpost');
+        }
+    } else {
+        res.redirect('/login');
     }
 });
 
@@ -370,6 +405,90 @@ app.get('/posts', async (req, res) => {
             }
         } catch (err) {
             res.status(400).send(err.message);
+        }
+    } else {
+        res.status(400).send({ message: 'Not logged in' });
+    }
+});
+
+app.put('/post', async (req, res) => {
+    if (req.isAuthenticated()) {
+        const { id, title, description, location, image, category } = req.body;
+        if (!description || !title || !location || !image || !id) {
+            res.status(400).send({
+                message: 'Missing title, description, location, or image',
+            });
+            return;
+        }
+        if (id && id.length === 24) {
+            const database = mongoClient.db();
+            const posts = database.collection('posts');
+            const data = await posts.findOne({
+                _id: ObjectId(id),
+            });
+            if (data === null || data === undefined || data.length === 0) {
+                res.status(400).send({ message: 'Post not found' });
+                return;
+            }
+            const user = data.user;
+            const userId = JSON.stringify(user).split('"')[7];
+            if (req.user._id.toString() === userId.toString()) {
+                const data = {
+                    title,
+                    description,
+                    location,
+                    image,
+                    date: new Date(),
+                    category: {
+                        $ref: 'categories',
+                        $id: category,
+                        $db: process.env.MONGODB_DATABASE,
+                    },
+                };
+                try {
+                    console.log('data', data);
+                    await posts.updateOne(
+                        { _id: ObjectId(id) },
+                        { $set: data }
+                    );
+                    res.status(200).send({ message: 'Post updated' });
+                } catch (err) {
+                    res.status(400).send(err.message);
+                }
+            } else {
+                res.status(400).send({ message: 'Not authorized' });
+            }
+        }
+    } else {
+        res.status(400).send({ message: 'Not logged in' });
+    }
+});
+
+app.delete('/post', async (req, res) => {
+    if (req.isAuthenticated()) {
+        const { id } = req.body;
+        if (id && id.length === 24) {
+            const database = mongoClient.db();
+            const posts = database.collection('posts');
+            const data = await posts.findOne({
+                _id: ObjectId(id),
+            });
+            if (data === null || data === undefined || data.length === 0) {
+                res.status(400).send({ message: 'Post not found' });
+                return;
+            }
+            const user = data.user;
+            const userId = JSON.stringify(user).split('"')[7];
+            if (req.user._id.toString() === userId.toString()) {
+                await posts.deleteOne({
+                    _id: ObjectId(id),
+                });
+                res.status(200).send({ message: 'Post deleted' });
+            } else {
+                res.status(400).send({ message: 'Not authorized' });
+            }
+        } else {
+            res.status(400).send({ message: 'Invalid id' });
         }
     } else {
         res.status(400).send({ message: 'Not logged in' });
@@ -668,6 +787,12 @@ app.delete('/rooms/:roomId/user', async (req, res) => {
 // Get info of current user
 app.get('/currentUser', async (req, res) => {
     res.send(req.user);
+});
+
+// User info
+app.get('/userInfo', async (req, res) => {
+    const userInfo = req.user;
+    res.send(userInfo);
 });
 
 // Main
