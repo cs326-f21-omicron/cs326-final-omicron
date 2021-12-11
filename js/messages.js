@@ -1,161 +1,123 @@
-// async function renderMessagesSidebarContent(userID, chatGroupID) {
-//   const sidebarContentDiv = document.getElementById('sidebarContent');
-//   while (sidebarContentDiv.firstChild) {
-//     sidebarContentDiv.removeChild(sidebarContentDiv.firstChild);
-//   }
+const removeAllChildenElements = (parent) => {
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
+  }
+};
 
-//   const res = await fetch(`/user/${userID}/chatGroupsList`, {
-//     method: 'GET',
-//   });
-//   const data = await res.json();
+function gotoBottom(element) {
+  element.scrollTop = element.scrollHeight - element.clientHeight;
+}
 
-//   for (const chatGroupInfo of data) {
-//     const chatGroupInfoDiv = document.createElement('div');
-//     chatGroupInfoDiv.innerHTML = `
-//         <a
-//           href="/messages?id=${chatGroupInfo.id}"
-//           class="
-//             list-group-item list-group-item-action
-//             py-3
-//             lh-tight
-//             ${chatGroupID === chatGroupInfo.id ? 'active' : ''}
-//           "
-//           ${chatGroupID === chatGroupInfo.id ? 'aria-current="true"' : ''}
-//         >
-//           <div class="d-flex align-items-center">
-//             <div class="ms-3 w-100">
-//               <div
-//                 class="
-//                   d-flex
-//                   w-100
-//                   align-items-center
-//                   justify-content-between
-//                   mb-1
-//                 "
-//               >
-//                 <strong>${chatGroupInfo.name}</strong>
-//                 <small>${chatGroupInfo.lastMessage.timeDifference}</small>
-//               </div>
-//               <small>${chatGroupInfo.lastMessage.author.name}: ${
-//       chatGroupInfo.lastMessage.text
-//     }</small>
-//             </div>
-//           </div>
-//         </a>
-//     `;
-//     sidebarContentDiv.appendChild(chatGroupInfoDiv);
-//   }
-// }
+async function renderMessages() {
+  if (!(user || room)) {
+    return;
+  }
 
-// async function renderMessagesBoxContent(userID, chatGroupID) {
-//   const messagesBoxContentDiv = document.getElementById('messagesBoxContent');
-//   while (messagesBoxContentDiv.firstChild) {
-//     messagesBoxContentDiv.removeChild(messagesBoxContentDiv.firstChild);
-//   }
+  const messagesBoxContentDiv = document.getElementById('messagesBoxContent');
+  removeAllChildenElements(messagesBoxContentDiv);
 
-//   const res = await fetch(`/chatGroup/${chatGroupID}/messages`, {
-//     method: 'GET',
-//   });
-//   const data = await res.json();
+  const res = await fetch(`/rooms/${room._id}/messages`, {
+    method: 'GET',
+  });
+  const data = await res.json();
 
-//   for (const message of data) {
-//     const messageDiv = document.createElement('div');
-//     messageDiv.innerHTML =
-//       message.author.id === userID
-//         ? `
-//           <div class="mb-3 text-end">
-//             <p class="my-1">${message.author.name}</p>
-//             <div class="alert alert-secondary mb-1">
-//               ${message.text}
-//             </div>
-//           </div>
-//         `
-//         : `
-//           <div class="mb-3">
-//             <p class="my-1">${message.author.name}</p>
-//             <div class="alert alert-primary mb-1">
-//               ${message.text}
-//             </div>
-//           </div>
-//         `;
-//     messagesBoxContentDiv.appendChild(messageDiv);
-//   }
+  for (const message of data) {
+    addMessage(message, user._id);
+  }
+}
 
-//   gotoBottom('messagesBox');
-// }
+const addMessage = async (message) => {
+  if (!(user || room)) {
+    return;
+  }
 
-// function renderChatForm(userID, chatGroupID) {
-//   const chatFormElement = document.getElementById('chatForm');
-//   if (!chatGroupID) {
-//     chatFormElement.classList.add('d-none');
-//   }
-// }
+  const messageDiv = document.createElement('div');
+  messageDiv.innerHTML =
+    message.user === user._id
+      ? `
+        <div class="mb-3 text-end">
+          <p class="my-1">${message.userDisplayName} (${new Date(message.createdAt).toLocaleString()})</p>
+          <div class="alert alert-primary mb-1">
+            ${message.content}
+          </div>
+        </div>
+      `
+      : `
+        <div class="mb-3">
+          <p class="my-1">${message.userDisplayName} (${new Date(message.createdAt).toLocaleString()})</p>
+          <div class="alert alert-secondary mb-1">
+            ${message.content}
+          </div>
+        </div>
+      `;
+  document.getElementById('messagesBoxContent').appendChild(messageDiv);
+  gotoBottom(document.getElementById('messagesBox'));
+};
 
-// async function postNewMessage(authorID, chatGroupID, text) {
-//   const res = await fetch(`/chatGroup/${chatGroupID}/messages/new`, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       'Access-Control-Allow-Origin': '*',
-//     },
-//     body: JSON.stringify({
-//       authorID,
-//       text,
-//     }),
-//   });
-//   const data = await res.json();
-//   // console.log(data);
-//   return data;
-// }
+const chatFormHandler = async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
 
-// function gotoBottom(id) {
-//   const element = document.getElementById(id);
-//   element.scrollTop = element.scrollHeight - element.clientHeight;
-// }
+  try {
+    await fetch(`/rooms/${room._id}/message`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: user._id,
+        content: document.getElementById('chatText').value
+      })
+    });
 
-// window.addEventListener('load', async function () {
-//   const params = new URL(document.location).searchParams;
-
-//   await renderMessagesSidebarContent('1', params.get('id'));
-//   await renderMessagesBoxContent('1', params.get('id'));
-
-//   renderChatForm('1', params.get('id'));
-// });
-
-// document
-//   .getElementById('chatForm')
-//   .addEventListener('submit', async function (e) {
-//     const params = new URL(document.location).searchParams;
-
-//     e.preventDefault();
-//     e.stopPropagation();
-
-//     const chatText = document.getElementById('chatText').value.trim();
-//     if (chatText) {
-//       await postNewMessage('1', params.get('id'), chatText);
-
-//       await renderMessagesSidebarContent('1', params.get('id'));
-//       await renderMessagesBoxContent('1', params.get('id'));
-
-//       document.getElementById('chatText').value = '';
-//     }
-//   });
-
-
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
+    document.getElementById('chatText').value = "";
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 // eslint-disable-next-line no-undef
 const socket = io();
-// socket.on('message', data => addMessage(JSON.parse(data)));
+let user = {};
+let room = {};
 
-window.addEventListener('load', () => {
-  socket.emit("join", {
-    userId: urlParams.get("userId")
-  }, (err) => {
+window.addEventListener('load', async () => {
+  document.getElementById('chatForm').addEventListener('submit', chatFormHandler);
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  if (!(urlParams.has('roomId') || urlParams.has('postId'))) {
+    window.location.href = '/';
+    return;
+  }
+
+  try {
+    const userResponse = await fetch('/userInfo', { method: 'GET' });
+    user = await userResponse.json();
+
+    if (urlParams.has('roomId')) {
+      const roomId = urlParams.get('roomId');
+      const roomResponse = await fetch(`/rooms/${roomId}`, { method: 'GET' });
+      room = await roomResponse.json();
+    } else if (urlParams.has('postId')) {
+      const postId = urlParams.get('postId');
+      const roomResponse = await fetch(`/posts/${postId}/room`, { method: 'GET' });
+      room = await roomResponse.json();
+    }
+  } catch (err) {
+    console.log(err);
+  }
+
+  if (!room) {
+    window.location.href = '/';
+    return;
+  }
+
+  socket.emit("join", { roomId: room._id, userId: user._id }, (err) => {
     console.log(err);
   });
+  socket.on('message', data => addMessage(JSON.parse(data)));
 
-  // getRoom();
-  // getMessages();
+  renderMessages();
 });
