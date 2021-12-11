@@ -177,7 +177,7 @@ app.get('/signup', (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, name } = req.body;
 
     // input validation
     if (!username || !password) {
@@ -197,7 +197,7 @@ app.post('/signup', async (req, res) => {
         }
 
         // add user to database
-        await users.insertOne({ username, password });
+        await users.insertOne({ username, password, name });
 
         res.send({
             message: 'Signup successful',
@@ -227,17 +227,26 @@ app.get('/suggestion', async (req, res) => {
             if (req.query.category) {
                 const categoryID = req.query.category;
 
-                const category = await mongoClient
-                    .db()
-                    .collection('categories')
-                    .findOne({ _id: ObjectId(categoryID) });
-                const posts = await mongoClient
-                    .db()
-                    .collection('posts')
-                    .find({ 'category.$id': categoryID })
-                    .toArray();
-                category.posts = posts;
-                data.push(category);
+                if (categoryID.length === 24) {
+                    const category = await mongoClient
+                        .db()
+                        .collection('categories')
+                        .findOne({ _id: ObjectId(categoryID) });
+                    if (category === null) {
+                        res.status(400).send({ message: 'Category not found' });
+                        return;
+                    }
+                    const posts = await mongoClient
+                        .db()
+                        .collection('posts')
+                        .find({ 'category.$id': categoryID })
+                        .toArray();
+                    category.posts = posts;
+                    data.push(category);
+                } else {
+                    res.status(400).send({ message: 'Invalid category ID' });
+                    return;
+                }
             } else {
                 const userCategories = req.user.categories ?? [];
 

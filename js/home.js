@@ -5,23 +5,28 @@ const loadSuggestion = async () => {
     if (urlParams.has('category')) {
         requestUrl += `?category=${urlParams.get('category')}`;
     }
-
     try {
         const res = await fetch(requestUrl, {
             method: 'GET',
         });
 
-        const data = await res.json();
+        if (res.status === 400) {
+            throw new Error('Bad Request');
+        }
 
-        for (let i = 0; i < data.length; i++) {
-            const suggestion = data[i];
-            const posts = suggestion.posts;
-            const categoryTitle =
-                suggestion.title.charAt(0).toUpperCase() +
-                suggestion.title.slice(1);
-            const suggestionDiv = document.createElement('div');
-            suggestionDiv.classList.add('px-4');
-            let innerHtml = `
+        const data = await res.json();
+        let innterHtml = '';
+        console.log(data.length);
+        if (data.length !== 0) {
+            for (let i = 0; i < data.length; i++) {
+                const suggestion = data[i];
+                const posts = suggestion.posts;
+                const categoryTitle =
+                    suggestion.title.charAt(0).toUpperCase() +
+                    suggestion.title.slice(1);
+                const suggestionDiv = document.createElement('div');
+                suggestionDiv.classList.add('px-4');
+                innerHtml = `
       <h2 class="pb-2">${categoryTitle}</h2>
       <div
         class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 pt-3"
@@ -94,16 +99,21 @@ const loadSuggestion = async () => {
           </div>
           </div>   
 `;
-            if (!urlParams.has('category')) {
-                innerHtml += `<h5 class="text-end mt-3">
+                if (!urlParams.has('category')) {
+                    innerHtml += `<h5 class="text-end mt-3">
         <a href="/home?category=${data[i]._id}" class="text-decoration-none">More postings</a>
       </h5>`;
+                }
             }
             suggestionDiv.innerHTML = innerHtml;
             document.getElementById('suggestion').appendChild(suggestionDiv);
+        } else {
+            innerHtml = `<h2 class="pb-2">Please add your hobbies to see your suggestion</h2>`;
+            document.getElementById('suggestion').innerHTML = innerHtml;
         }
     } catch (err) {
         console.log(err);
+        window.location.href = '/login';
     }
 };
 
