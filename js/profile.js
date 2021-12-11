@@ -228,4 +228,17 @@ async function loadProfile(username) {
     });
 }
 
-loadProfile('kirkj@email.com');
+async function loadUser() {
+    const prom = await fetch(`/userInfo`, 
+    {headers: {
+        'Content-Type': 'application/json;charset=utf-8'
+        },        
+    method: "GET"
+    }).then(async res => {
+        const info = await res.json();
+        const username = info.username;
+        loadProfile(username);
+    });
+}
+
+loadUser();
