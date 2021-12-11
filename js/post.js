@@ -13,9 +13,8 @@ const getPost = async () => {
       const post = data[0];
       const container = document.getElementById('post-container');
       container.innerHTML = `
-        
-      <h1>${post.title}</h1>
-      <div class="d-flex flex-row mt-3">
+        <h1 class="mt-4">${post.title}</h1>
+        <div class="d-flex flex-row mt-3">
 
         <!-- author -->
         <span class="d-flex align-items-center pe-4">
