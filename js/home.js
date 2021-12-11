@@ -104,9 +104,11 @@ const loadSuggestion = async () => {
         <a href="/home?category=${data[i]._id}" class="text-decoration-none">More postings</a>
       </h5>`;
                 }
+                suggestionDiv.innerHTML = innerHtml;
+                document
+                    .getElementById('suggestion')
+                    .appendChild(suggestionDiv);
             }
-            suggestionDiv.innerHTML = innerHtml;
-            document.getElementById('suggestion').appendChild(suggestionDiv);
         } else {
             innerHtml = `<h2 class="pb-2">Please add your hobbies to see your suggestion</h2>`;
             document.getElementById('suggestion').innerHTML = innerHtml;
