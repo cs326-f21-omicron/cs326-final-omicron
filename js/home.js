@@ -1,39 +1,39 @@
 const loadSuggestion = async () => {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  let requestUrl = '/suggestion';
-  if (urlParams.has('category')) {
-    requestUrl += `?category=${urlParams.get('category')}`;
-  }
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    let requestUrl = '/suggestion';
+    if (urlParams.has('category')) {
+        requestUrl += `?category=${urlParams.get('category')}`;
+    }
 
-  try {
-    const res = await fetch(requestUrl, {
-      method: 'GET'
-    });
+    try {
+        const res = await fetch(requestUrl, {
+            method: 'GET',
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    for (let i = 0; i < data.length; i++) {
-      const suggestion = data[i];
-      const posts = suggestion.posts;
-      const categoryTitle =
-        suggestion.title.charAt(0).toUpperCase() +
-        suggestion.title.slice(1);
-      const suggestionDiv = document.createElement('div');
-      suggestionDiv.classList.add('px-4');
-      suggestionDiv.innerHTML = `
+        for (let i = 0; i < data.length; i++) {
+            const suggestion = data[i];
+            const posts = suggestion.posts;
+            const categoryTitle =
+                suggestion.title.charAt(0).toUpperCase() +
+                suggestion.title.slice(1);
+            const suggestionDiv = document.createElement('div');
+            suggestionDiv.classList.add('px-4');
+            let innerHtml = `
       <h2 class="pb-2">${categoryTitle}</h2>
       <div
         class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 pt-3"
       >
         ${posts
-          .map((post) => {
-            //calculate how many days ago the post was created
-            const date = new Date(post.date);
-            const now = new Date();
-            const diffTime = Math.abs(now - date);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return `
+            .map((post) => {
+                //calculate how many days ago the post was created
+                const date = new Date(post.date);
+                const now = new Date();
+                const diffTime = Math.abs(now - date);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return `
               <a class="col nounderline" href="/view?id=${post._id}">
               <div
                 class="
@@ -89,21 +89,22 @@ const loadSuggestion = async () => {
                 </div>
               </a>
               `;
-          })
-          .join('')}
+            })
+            .join('')}
           </div>
-          </div>
-
-          <h5 class="text-end mt-3">
-            <a href="/home?category=${data[i]._id
-        }" class="text-decoration-none">More postings</a>
-          </h5>
-      `;
-      document.getElementById('suggestion').appendChild(suggestionDiv);
+          </div>   
+`;
+            if (!urlParams.has('category')) {
+                innerHtml += `<h5 class="text-end mt-3">
+        <a href="/home?category=${data[i]._id}" class="text-decoration-none">More postings</a>
+      </h5>`;
+            }
+            suggestionDiv.innerHTML = innerHtml;
+            document.getElementById('suggestion').appendChild(suggestionDiv);
+        }
+    } catch (err) {
+        console.log(err);
     }
-  } catch (err) {
-    console.log(err);
-  }
 };
 
 window.addEventListener('load', loadSuggestion);
