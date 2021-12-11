@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import { formatDistanceToNowStrict } from 'date-fns';
 import dotenv from 'dotenv';
 import express from 'express';
 import session from 'express-session';
@@ -9,6 +10,7 @@ import { Passport } from 'passport';
 import { Strategy } from 'passport-local';
 import { Server as SocketServer } from "socket.io";
 
+
 // this is to load the env file on local environment
 
 dotenv.config();
@@ -17,6 +19,12 @@ dotenv.config();
 // Config
 
 const PORT = process.env.PORT || 8080;
+
+const bodyParserOption = {
+  extended: true,
+  parameterLimit: 100000,
+  limit: '50mb',
+};
 
 const sessionOption = {
   secret: process.env.SECRET || 'SECRETTTTTT',
@@ -51,10 +59,11 @@ io.on('connection', async socket => {
 
   // connect user to all rooms
   socket.on('join', async ({ userId }) => {
-    const data = await mongoClient.db().collection('users').findOne({
-      _id: ObjectId(userId)
-    });
-    data?.rooms?.forEach(room => socket.join(room.toString()));
+    console.log(`User ${userId} connected`);
+    // const data = await mongoClient.db().collection('users').findOne({
+    //   _id: ObjectId(userId)
+    // });
+    // data?.rooms?.forEach(room => socket.join(room.toString()));
   });
 
   // when user disconnects
@@ -71,13 +80,7 @@ app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
 
 app.use(cors());
-app.use(
-  bodyParser.json({
-    extended: true,
-    parameterLimit: 100000,
-    limit: '50mb',
-  })
-);
+app.use(bodyParser.json(bodyParserOption));
 app.use(session(sessionOption));
 
 
@@ -224,54 +227,40 @@ app.get('/logout', (req, res) => {
 
 app.get('/suggestion', async (req, res) => {
   if (req.isAuthenticated()) {
-    if (req.query.category) {
-      try {
+    try {
+      const data = [];
+
+      if (req.query.category) {
         const categoryID = req.query.category;
-        const database = mongoClient.db();
-        const postData = database.collection('posts');
-        const categoryData = database.collection('categories');
-        const categoryInfo = await categoryData
-          .find({ _id: ObjectId(categoryID) })
-          .toArray();
-        const data = [];
-        data.push(categoryInfo[0]);
-        const posts = await postData
+
+        const category = await mongoClient.db().collection('categories')
+          .findOne({ _id: ObjectId(categoryID) });
+        const posts = await mongoClient.db().collection('posts')
           .find({ 'category.$id': categoryID })
           .toArray();
-        data[0].posts = posts;
-        res.status(200).send(data);
-      } catch (err) {
-        console.log(err);
-        res.status(400).send({ message: err.message });
-      }
-    } else {
-      try {
-        const database = mongoClient.db();
-        const postData = database.collection('posts');
-        const categoryData = database.collection('categories');
+        category.posts = posts;
+        data.push(category);
+      } else {
         const userCategories = req.user.categories ?? [];
 
-        const data = [];
-
         for (let i = 0; i < userCategories.length; i++) {
-          const categoryInfo = await categoryData
-            .find({ _id: ObjectId(userCategories[i].$id) })
-            .toArray();
-          data.push(categoryInfo[0]);
-          const postList = await postData
+          const category = await mongoClient.db().collection('categories')
+            .findOne({ _id: ObjectId(userCategories[i].$id) });
+          const posts = await mongoClient.db().collection('posts')
             .find({ 'category.$id': userCategories[i].$id })
             .limit(3)
             .toArray();
-          data[i].posts = postList;
+          category.posts = posts;
+          data.push(category);
         }
-
-        res.status(200).send(data);
-      } catch (err) {
-        res.status(400).send({ message: err.message });
       }
+
+      res.status(200).send(data);
+    } catch (err) {
+      res.status(400).send({ message: err.message });
     }
   } else {
-    res.status(400).send({ message: 'You are not logged in' });
+    res.status(401).send({ message: 'You are not logged in' });
   }
 });
 
@@ -393,14 +382,25 @@ app.get('/view', async (req, res) => {
 
 // Messaging
 
+// GET Messages page
 app.get('/messages', async (req, res) => {
-  // if (req.isAuthenticated()) {
-  res.sendFile('messages.html', { root: './html' });
-  // } else {
-  //   res.redirect('/login');
-  // }
+  if (req.isAuthenticated()) {
+    res.sendFile('messages.html', { root: './html' });
+  } else {
+    res.redirect('/login');
+  }
 });
 
+
+app.get('/newmessages', async (req, res) => {
+  if (req.isAuthenticated()) {
+    res.sendFile('newmessages.html', { root: './html' });
+  } else {
+    res.redirect('/login');
+  }
+});
+
+// POST Create new room
 app.post('/rooms', async (req, res) => {
   const { name, type } = req.body;
 
@@ -427,19 +427,18 @@ app.post('/rooms', async (req, res) => {
   }
 });
 
+// GET room info
 app.get('/rooms/:roomId', async (req, res) => {
   const { roomId } = req.params;
-  // const { userId } = req.body;
 
   try {
     // find one room
     const room = await mongoClient.db().collection('rooms').findOne({
       _id: ObjectId(roomId),
-      // users: ObjectId(userId)
     });
 
     // return result
-    res.end(room ?? {});
+    res.send(room ?? {});
   }
   catch (err) {
     console.log(err);
@@ -449,6 +448,44 @@ app.get('/rooms/:roomId', async (req, res) => {
   }
 });
 
+
+app.get('/rooms/:roomId/details', async (req, res) => {
+  const { roomId } = req.params;
+
+  try {
+    // find one room
+    const room = await mongoClient.db().collection('rooms').findOne({
+      _id: ObjectId(roomId),
+    });
+
+    // populate lastMessage
+    if (room.lastMessage) {
+      room.lastMessage = await mongoClient.db().collection('messages').findOne({
+        _id: room.lastMessage
+      });
+
+      // get user's name
+      const user = await mongoClient.db().collection('users').findOne({
+        _id: room.lastMessage.user
+      });
+      room.lastMessage.userName = user.name ? user.name : "Unknown user";
+
+      // get time difference
+      room.lastMessage.timeDifference = formatDistanceToNowStrict(room.lastMessage.createdAt);
+    }
+
+    // return result
+    res.send(room ?? {});
+  }
+  catch (err) {
+    console.log(err);
+    res.status(500).send({
+      message: "Error"
+    });
+  }
+});
+
+// GET room messages
 app.get('/rooms/:roomId/messages', async (req, res) => {
   const { roomId } = req.params;
 
@@ -481,8 +518,10 @@ app.get('/rooms/:roomId/messages', async (req, res) => {
   }
 });
 
-app.post('/messages', async (req, res) => {
-  const { content, userId, roomId } = req.body;
+// POST new message
+app.post('/rooms/:roomId/message', async (req, res) => {
+  const { roomId } = req.params;
+  const { content, userId } = req.body;
 
   const message = {
     content,
@@ -524,7 +563,8 @@ app.post('/messages', async (req, res) => {
   }
 });
 
-app.post('/rooms/:roomId/users', async (req, res) => {
+// POST add user to room
+app.post('/rooms/:roomId/user', async (req, res) => {
   const { roomId } = req.params;
   const { userId } = req.body;
 
@@ -553,7 +593,8 @@ app.post('/rooms/:roomId/users', async (req, res) => {
   }
 });
 
-app.delete('/rooms/:roomId/users', async (req, res) => {
+// DELETE user from room
+app.delete('/rooms/:roomId/user', async (req, res) => {
   const { roomId } = req.params;
   const { userId } = req.body;
 
@@ -582,6 +623,7 @@ app.delete('/rooms/:roomId/users', async (req, res) => {
   }
 });
 
+// Get info of current user
 app.get('/currentUser', async (req, res) => {
   res.send(req.user);
 });
