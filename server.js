@@ -504,9 +504,9 @@ app.delete('/post', async (req, res) => {
     }
 });
 
-app.get('/view', async (req, res) => {
+app.get('/post', async (req, res) => {
     if (req.isAuthenticated()) {
-        res.sendFile('view.html', { root: './html' });
+        res.sendFile('post.html', { root: './html' });
     } else {
         res.redirect('/login');
     }
@@ -639,12 +639,12 @@ app.get('/rooms/:roomId/messages', async (req, res) => {
         // populate messages
         const messages = room.messages
             ? await mongoClient
-                  .db()
-                  .collection('messages')
-                  .find({
-                      _id: { $in: room.messages },
-                  })
-                  .toArray()
+                .db()
+                .collection('messages')
+                .find({
+                    _id: { $in: room.messages },
+                })
+                .toArray()
             : [];
 
         // add user's display name to messages

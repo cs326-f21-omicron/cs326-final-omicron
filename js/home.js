@@ -40,7 +40,7 @@ const loadSuggestion = async () => {
               const diffTime = Math.abs(now - date);
               const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
               return `
-              <a class="col nounderline" href="/view?id=${post._id}">
+              <a class="col nounderline" href="/post?id=${post._id}">
               <div
                 class="
                   card card-cover
