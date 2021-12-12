@@ -114,10 +114,10 @@ window.addEventListener('load', async () => {
     return;
   }
 
-  socket.emit("join", { roomId: room._id, userId: user._id }, (err) => {
+  await renderMessages();
+
+  socket.emit("join", { roomId: room._id }, (err) => {
     console.log(err);
   });
   socket.on('message', data => addMessage(JSON.parse(data)));
-
-  renderMessages();
 });

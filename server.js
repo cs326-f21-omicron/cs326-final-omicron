@@ -49,18 +49,9 @@ const io = new SocketServer(server);
 // Socket.io
 
 io.on('connection', async (socket) => {
-  // when user connects
-  console.log(`${socket.id} connected`);
-
   // connect user to room
-  socket.on('join', async ({ userId, roomId }) => {
-    console.log(`User ${userId} connected`);
+  socket.on('join', async ({ roomId }) => {
     socket.join(roomId);
-  });
-
-  // when user disconnects
-  socket.on('disconnect', () => {
-    console.log(`${socket.id} disconnected`);
   });
 });
 
@@ -530,7 +521,7 @@ app.post('/rooms', async (req, res) => {
 
   // set up data
   const room = {
-    postId,
+    postId: ObjectId(postId),
     messages: [],
   };
 
@@ -581,10 +572,20 @@ app.get('/posts/:postId/room', async (req, res) => {
 
   try {
     // find one room
-    const room = await mongoClient.db().collection('rooms')
+    let room = await mongoClient.db().collection('rooms')
       .findOne({
         postId: ObjectId(postId),
       });
+
+    // a little hack
+    // if post is created and room is not, then create room
+    if (!room) {
+      room = {
+        postId: ObjectId(postId),
+        messages: [],
+      };
+      await mongoClient.db().collection('rooms').insertOne(room);
+    }
 
     room.post = await mongoClient.db().collection('posts')
       .findOne({
