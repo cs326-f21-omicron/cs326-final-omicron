@@ -11,7 +11,7 @@ const loadPost = async () => {
     });
 
     const post = await res.json();
-    postData = post[0];
+    const postData = post[0];
     document.getElementById('title').value = postData.title;
     document.getElementById('description').value = postData.description;
     document.getElementById('locationn').value = postData.location;

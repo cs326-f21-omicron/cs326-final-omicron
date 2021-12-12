@@ -161,24 +161,24 @@ async function resetProfile() {
 
 
 function renderProfile(profile) {
-    let nameDiv = document.getElementById("name");
+    const nameDiv = document.getElementById("name");
     nameDiv.innerHTML = profile.info.Name;
-    let emailDiv = document.getElementById("email");
+    const emailDiv = document.getElementById("email");
     emailDiv.innerHTML = profile.info.Email;
 
-    let bioDiv = document.getElementById("bio");
+    const bioDiv = document.getElementById("bio");
     bioDiv.innerHTML = profile.bio;
 
-    let cityDiv = document.getElementById("city");
+    const cityDiv = document.getElementById("city");
     cityDiv.innerHTML = profile.geo.City;
-    let areaDiv = document.getElementById("area");
+    const areaDiv = document.getElementById("area");
     areaDiv.innerHTML = profile.geo.Area;
 
 
-    let InterestNameDiv = document.getElementById("interest-name");
-    let InterestScoreDiv = document.getElementById("interest-score");
-    let HobbyNameDiv = document.getElementById("hobby-name");
-    let HobbyScoreDiv = document.getElementById("hobby-score");
+    const InterestNameDiv = document.getElementById("interest-name");
+    const InterestScoreDiv = document.getElementById("interest-score");
+    const HobbyNameDiv = document.getElementById("hobby-name");
+    const HobbyScoreDiv = document.getElementById("hobby-score");
 
     while(HobbyNameDiv.lastChild) {
         HobbyNameDiv.removeChild(HobbyNameDiv.lastChild);
@@ -196,8 +196,8 @@ function renderProfile(profile) {
     for(const entry of profile.hobbies) {
         const hobby = entry["hobby"];
         const score = entry["score"];
-        let currHobby = document.createElement("h4");
-        let currScore = document.createElement("h4");
+        const currHobby = document.createElement("h4");
+        const currScore = document.createElement("h4");
         currHobby.innerHTML = hobby;
         currScore.innerHTML = score;
         HobbyNameDiv.appendChild(currHobby);
@@ -206,8 +206,8 @@ function renderProfile(profile) {
     for(const entry of profile.interests) {
         const interest = entry["interest"];
         const score = entry["score"];
-        let currInterest = document.createElement("h4");
-        let currScore = document.createElement("h4");
+        const currInterest = document.createElement("h4");
+        const currScore = document.createElement("h4");
         currInterest.innerHTML = interest;
         currScore.innerHTML = score;
         InterestNameDiv.appendChild(currInterest);
