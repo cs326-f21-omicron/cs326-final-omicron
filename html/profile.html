@@ -1,289 +1,276 @@
 <!-- Template taken from https://getbootstrap.com/docs/5.1/getting-started/introduction/ -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Page's title -->
-    <title>Profile - HobbShop</title>
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+  <!-- Favicon -->
+  <link rel="icon" href="/images/favicon.ico">
 
-    <!-- Bootstrap Icon CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.1/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-    
-    <!-- Custom CSS -->
-    <link href="/css/navbar.css" rel="stylesheet"/>
-    <link href="/css/profile.css" rel="stylesheet"/>
+  <!-- Page's title -->
+  <title>Profile - HobbShop</title>
 
-    <!-- Custom JS -->
-    <script src="/js/profile.js" defer></script>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-        <style>
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-        }
+  <!-- Bootstrap Icon CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.1/font/bootstrap-icons.css" rel="stylesheet" />
 
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-            font-size: 3.5rem;
-            }
-        }
-        </style>
+  <!-- Custom CSS -->
+  <link href="/css/navbar.css" rel="stylesheet" />
+  <link href="/css/profile.css" rel="stylesheet" />
 
-        
-        <!-- Custom styles for this template -->
-        
-        
-    </head>
+  <!-- Custom JS -->
+  <script src="/js/profile.js" defer></script>
 
-    <body>
-        <div class="d-flex flex-column vh-100">
-            <!-- Navbar -->
-            <header class="bg-dark text-white py-3 custom-navbar">
-                <div class="d-flex flex-wrap mx-4">
-                    <!-- Site icon -->
-                    <span
-                        class="
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+
+
+  <!-- Custom styles for this template -->
+
+
+</head>
+
+<body>
+  <div class="d-flex flex-column vh-100">
+    <!-- Navbar -->
+    <header class="bg-dark text-white py-3 custom-navbar">
+      <div class="d-flex flex-wrap mx-4">
+        <!-- Site icon -->
+        <span class="
                             d-flex
                             align-items-center
                             mb-3 mb-md-0
                             me-md-auto
                             text-white
                             user-select-none
-                        "
-                    >
-                        <i class="bi bi-tree-fill me-2 custom-font"></i>
-                        <span class="fs-4">HobbShop</span>
-                    </span>
+                        ">
+          <i class="bi bi-tree-fill me-2 custom-font"></i>
+          <span class="fs-4">HobbShop</span>
+        </span>
 
-                    <!-- Nav pills -->
-                    <div class="d-flex align-items-center">
-                        <ul class="nav nav-pills">
-                            <li class="nav-item">
-                                <a
-                                    href="#"
-                                    class="nav-link active"
-                                    aria-current="page"
-                                >
-                                    <i class="bi bi-house-door me-1"></i>
-                                    Home
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link text-white">
-                                    <i class="bi bi-chat-left-text me-1"></i>
-                                    Messages
-                                </a>
-                            </li>
-                        </ul>
+        <!-- Nav pills -->
+        <div class="d-flex align-items-center">
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <a href="#" class="nav-link active" aria-current="page">
+                <i class="bi bi-house-door me-1"></i>
+                Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link text-white">
+                <i class="bi bi-chat-left-text me-1"></i>
+                Messages
+              </a>
+            </li>
+          </ul>
 
-                        <!-- User icon -->
-                        <div class="dropdown text-end ms-4">
-                            <a
-                                href="#"
-                                class="
+          <!-- User icon -->
+          <div class="dropdown text-end ms-4">
+            <a href="#" class="
                                     d-block
                                     link-light
                                     text-decoration-none
                                     dropdown-toggle
-                                "
-                                id="dropdownUser"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
-                                <img
-                                    src="https://github.com/lukednguyen.png"
-                                    alt="mdo"
-                                    width="32"
-                                    height="32"
-                                    class="rounded-circle"
-                                />
-                            </a>
-                            <ul
-                                class="dropdown-menu text-small"
-                                aria-labelledby="dropdownUser"
-                            >
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-person-circle me-1"></i>
-                                        Profile
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-gear me-1"></i>
-                                        Settings
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-door-open me-1"></i>
-                                        Sign out
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </header>
-        
-            <div class="container-fluid px-4 py-2" id="custom-cards">
-                <h2 class="col mt-2 pb-2 border-dark border-bottom">USER PROFILE &#8203 &#8203 &#8203 &#8203<img src="../images/usericon.svg">
-                  &#8203 &#8203 &#8203 &#8203 &#8203 &#8203<button class="btn-lg bi bi-pen btn-primary" type="button" id="reset-btn">Reset Profile</button></h2>
-                <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-1">
-                  <div class="col">
-                    <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg" style="background-image: url('../images/moon.jpg');">
-                        <div class="card-header display-6 lh-1 fw-bold">Basic Info</div>
-                      <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                        <h2 class="lh-1 fw-bold">Name</h2>
-                        <h4 class="card-text" id="name"></h4>
-                        <h2 class="lh-1 fw-bold">Email</h2>
-                        <h4 class="card-text" id="email"></h4>
-                        <br>
-                        <ul class="d-flex list-unstyled mt-auto">
-                          <div class="d-flex w-100 gap-2">
-                            <input id="name-input" type="text" class="form-control-sm" placeholder="Enter Name">
-                            <button class="btn-sm bi bi-pen btn-primary" type="button" id="name-btn">Update Name</button>
-                          </div>
-                          
-                      </ul>
-                      <ul class="d-flex list-unstyled mt-auto">
-                        <div class="d-flex w-100 gap-2">
-                        </div>
-                        
-                    </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col">
-                    <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg" style="background-image: url('../images/jellyfish.jpg');">
-                        <div class="card-header display-6 lh-1 fw-bold">Bio</div>
-                      <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                        <p id='bio'></p>
-                        <br>
-                        <ul class="d-flex list-unstyled mt-auto">
-                          <div class="d-flex w-100 gap-2">
-                            <input id="bio-input" type="text" class="form-control-sm" placeholder="Enter Bio">
-                            <button class="btn-sm bi bi-pen btn-primary" type="button" id="bio-btn">Update Bio</button>    
-                          </div>    
-                      </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col">
-                    <div class="card card-cover h-100 overflow-hidden text-light bg-dark rounded-5 shadow-lg" style="background-image: url('../images/geo.jpg');">
-                        <div class="card-header display-6 lh-1 fw-bold">Location</div>
-                      <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">
-                        <div class="row">
-                          <div class="col">
-                            <h2 class="container lh-1 fw-bold text-white" id=>City</h2>
-                            <h4 class="container lh-1 fw-bold text-white" id="city"></h4>
-                          </div>
-                          <div class="col">
-                            <h2 class="container lh-1 fw-bold text-white">Area</h2>
-                            <h4 class="container lh-1 fw-bold text-white" id="area"></h4>
-                            </div>
-                        </div>
-                          <br>
-                          <ul class="d-flex list-unstyled mt-auto">
-                            <div class="d-flex w-100 gap-2">
-                              <input id="city-input" type="text" class="form-control-sm" placeholder="Enter City">
-                              <button class="btn-sm bi bi-pen btn-primary" type="button" id="city-btn">Update City</button>
-                            </div>
-                          </ul>
-                        <ul class="d-flex list-unstyled mt-auto">
-                          <div class="d-flex w-100 gap-2">
-                            <input id="area-input" type="text" class="form-control-sm" placeholder="Enter Area">
-                            <button class="btn-sm bi bi-pen btn-primary" type="button" id="area-btn">Update Area</button>
-                          </div>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div> 
-            </div> 
-            <div class="container-fluid px-4 py-1" id="custom-cards">
-              <div class="row row-cols-1 row-cols-lg-2 align-items-stretch g-2">
-                <div class="col">
-                  <div class="card card-cover h-100 overflow-hidden text-light bg-dark rounded-5 shadow-lg" style="background-image: url('../images/hobby.jpg');">
-                      <div class="card-header display-6 lh-1 fw-bold">Hobby List</div>
-                    <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">
-                      <div class="row">
-                        <div class="col">
-                          <h2 class="container lh-1 fw-bold text-white">Name</h2>
-                          <h4 class="container lh-1 fw-bold text-white" id="hobby-name"></h4>
-                        </div>
-                        <div class="col">
-                          <h2 class="container lh-1 fw-bold text-white">Score</h2>
-                          <h4 class="container lh-1 fw-bold text-white" id="hobby-score"></h4>
-                          </div>
-                      </div>
-                      <br>
-                      <ul class="d-flex list-unstyled mt-auto">
-                        <div class="d-flex w-100 gap-2">
-                          <input id="hobby-add-input" type="text" class="form-control-sm" placeholder="Hobby, score[1-10]">
-                          <button class="btn-sm bi bi-pen btn-primary" type="button" id="hobby-add-btn">Add Hobby</button>
-                        </div>
-                      </ul>
-                      <ul class="d-flex list-unstyled mt-auto">
-                        <div class="d-flex w-100 gap-2">
-                          <input id="hobby-remove-input" type="text" class="form-control-sm" placeholder="Enter Hobby">
-                          <button class="btn-sm bi bi-pen btn-primary" type="button" id="hobby-remove-btn">Delete</button>
-                        </div>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="card card-cover h-100 overflow-hidden text-light bg-dark rounded-5 shadow-lg" style="background-image: url('../images/crayons.jpg');">
-                      <div class="card-header display-6 lh-1 fw-bold">Interest List</div>
-                    <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">
-                      <div class="row">
-                        <div class="col">
-                          <h2 class="container lh-1 fw-bold text-white">Name</h2>
-                          <h4 class="container lh-1 fw-bold text-white" id="interest-name"></h4>
-                        </div>
-                        <div class="col">
-                          <h2 class="container lh-1 fw-bold text-white">Score</h2>
-                          <h4 class="container lh-1 fw-bold text-white" id="interest-score"></h4>
-                          </div>
-                      </div>
-                      <br>
-                      <ul class="d-flex list-unstyled mt-auto">
-                        <div class="d-flex w-100 gap-2">
-                          <input id="interest-add-input" type="text" class="form-control-sm" placeholder="Interest, score[1-10]">
-                          <button class="btn-sm bi bi-pen btn-primary" type="button" id="interest-add-btn">Add Interest</button>
-                        </div>
-                      </ul>
-                      <ul class="d-flex list-unstyled mt-auto">
-                        <div class="d-flex w-100 gap-2">
-                          <input id="interest-remove-input" type="text" class="form-control-sm" placeholder="Enter Interest">
-                          <button class="btn-sm bi bi-pen btn-primary" type="button" id="interest-remove-btn">Delete</button>
-                        </div>
-                      </ul>
-                    </div>
-                  </div>
-                </div>  
-              </div> 
-          </div> 
+                                " id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="https://github.com/lukednguyen.png" alt="mdo" width="32" height="32" class="rounded-circle" />
+            </a>
+            <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser">
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-person-circle me-1"></i>
+                  Profile
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-gear me-1"></i>
+                  Settings
+                </a>
+              </li>
+              <li>
+                <hr class="dropdown-divider" />
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-door-open me-1"></i>
+                  Sign out
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
-    </body>
-    
+      </div>
+    </header>
+
+    <div class="container-fluid px-4 py-2" id="custom-cards">
+      <h2 class="col mt-2 pb-2 border-dark border-bottom">USER PROFILE &#8203 &#8203 &#8203 &#8203<img
+          src="../images/usericon.svg">
+        &#8203 &#8203 &#8203 &#8203 &#8203 &#8203<button class="btn-lg bi bi-pen btn-primary" type="button"
+          id="reset-btn">Reset Profile</button></h2>
+      <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-1">
+        <div class="col">
+          <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg"
+            style="background-image: url('../images/moon.jpg');">
+            <div class="card-header display-6 lh-1 fw-bold">Basic Info</div>
+            <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+              <h2 class="lh-1 fw-bold">Name</h2>
+              <h4 class="card-text" id="name"></h4>
+              <h2 class="lh-1 fw-bold">Email</h2>
+              <h4 class="card-text" id="email"></h4>
+              <br>
+              <ul class="d-flex list-unstyled mt-auto">
+                <div class="d-flex w-100 gap-2">
+                  <input id="name-input" type="text" class="form-control-sm" placeholder="Enter Name">
+                  <button class="btn-sm bi bi-pen btn-primary" type="button" id="name-btn">Update Name</button>
+                </div>
+
+              </ul>
+              <ul class="d-flex list-unstyled mt-auto">
+                <div class="d-flex w-100 gap-2">
+                </div>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg"
+            style="background-image: url('../images/jellyfish.jpg');">
+            <div class="card-header display-6 lh-1 fw-bold">Bio</div>
+            <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+              <p id='bio'></p>
+              <br>
+              <ul class="d-flex list-unstyled mt-auto">
+                <div class="d-flex w-100 gap-2">
+                  <input id="bio-input" type="text" class="form-control-sm" placeholder="Enter Bio">
+                  <button class="btn-sm bi bi-pen btn-primary" type="button" id="bio-btn">Update Bio</button>
+                </div>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card card-cover h-100 overflow-hidden text-light bg-dark rounded-5 shadow-lg"
+            style="background-image: url('../images/geo.jpg');">
+            <div class="card-header display-6 lh-1 fw-bold">Location</div>
+            <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">
+              <div class="row">
+                <div class="col">
+                  <h2 class="container lh-1 fw-bold text-white" id=>City</h2>
+                  <h4 class="container lh-1 fw-bold text-white" id="city"></h4>
+                </div>
+                <div class="col">
+                  <h2 class="container lh-1 fw-bold text-white">Area</h2>
+                  <h4 class="container lh-1 fw-bold text-white" id="area"></h4>
+                </div>
+              </div>
+              <br>
+              <ul class="d-flex list-unstyled mt-auto">
+                <div class="d-flex w-100 gap-2">
+                  <input id="city-input" type="text" class="form-control-sm" placeholder="Enter City">
+                  <button class="btn-sm bi bi-pen btn-primary" type="button" id="city-btn">Update City</button>
+                </div>
+              </ul>
+              <ul class="d-flex list-unstyled mt-auto">
+                <div class="d-flex w-100 gap-2">
+                  <input id="area-input" type="text" class="form-control-sm" placeholder="Enter Area">
+                  <button class="btn-sm bi bi-pen btn-primary" type="button" id="area-btn">Update Area</button>
+                </div>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid px-4 py-1" id="custom-cards">
+      <div class="row row-cols-1 row-cols-lg-2 align-items-stretch g-2">
+        <div class="col">
+          <div class="card card-cover h-100 overflow-hidden text-light bg-dark rounded-5 shadow-lg"
+            style="background-image: url('../images/hobby.jpg');">
+            <div class="card-header display-6 lh-1 fw-bold">Hobby List</div>
+            <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">
+              <div class="row">
+                <div class="col">
+                  <h2 class="container lh-1 fw-bold text-white">Name</h2>
+                  <h4 class="container lh-1 fw-bold text-white" id="hobby-name"></h4>
+                </div>
+                <div class="col">
+                  <h2 class="container lh-1 fw-bold text-white">Score</h2>
+                  <h4 class="container lh-1 fw-bold text-white" id="hobby-score"></h4>
+                </div>
+              </div>
+              <br>
+              <ul class="d-flex list-unstyled mt-auto">
+                <div class="d-flex w-100 gap-2">
+                  <input id="hobby-add-input" type="text" class="form-control-sm" placeholder="Hobby, score[1-10]">
+                  <button class="btn-sm bi bi-pen btn-primary" type="button" id="hobby-add-btn">Add Hobby</button>
+                </div>
+              </ul>
+              <ul class="d-flex list-unstyled mt-auto">
+                <div class="d-flex w-100 gap-2">
+                  <input id="hobby-remove-input" type="text" class="form-control-sm" placeholder="Enter Hobby">
+                  <button class="btn-sm bi bi-pen btn-primary" type="button" id="hobby-remove-btn">Delete</button>
+                </div>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card card-cover h-100 overflow-hidden text-light bg-dark rounded-5 shadow-lg"
+            style="background-image: url('../images/crayons.jpg');">
+            <div class="card-header display-6 lh-1 fw-bold">Interest List</div>
+            <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">
+              <div class="row">
+                <div class="col">
+                  <h2 class="container lh-1 fw-bold text-white">Name</h2>
+                  <h4 class="container lh-1 fw-bold text-white" id="interest-name"></h4>
+                </div>
+                <div class="col">
+                  <h2 class="container lh-1 fw-bold text-white">Score</h2>
+                  <h4 class="container lh-1 fw-bold text-white" id="interest-score"></h4>
+                </div>
+              </div>
+              <br>
+              <ul class="d-flex list-unstyled mt-auto">
+                <div class="d-flex w-100 gap-2">
+                  <input id="interest-add-input" type="text" class="form-control-sm"
+                    placeholder="Interest, score[1-10]">
+                  <button class="btn-sm bi bi-pen btn-primary" type="button" id="interest-add-btn">Add Interest</button>
+                </div>
+              </ul>
+              <ul class="d-flex list-unstyled mt-auto">
+                <div class="d-flex w-100 gap-2">
+                  <input id="interest-remove-input" type="text" class="form-control-sm" placeholder="Enter Interest">
+                  <button class="btn-sm bi bi-pen btn-primary" type="button" id="interest-remove-btn">Delete</button>
+                </div>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
 </html>
