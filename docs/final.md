@@ -4,7 +4,7 @@
 
 [Github Repo](https://github.com/cs326-f21-omicron/cs326-final-omicron)
 
-## _Fall 2021_
+[Heroku link](https://cs326-f21-omicron-final.herokuapp.com/login)
 
 ## Overview
 
@@ -28,6 +28,7 @@
 | _New Post_     | New post page of the website where user can create a new post |
 | _View Post_    | View post page of the website where user can view a post      |
 | _Edit Post_    | Edit post page of the website where user can edit a post      |
+| _Messages_     | For users to communicate                                      |
 
 ## APIs
 
@@ -80,6 +81,29 @@ Description: This table stores all the posts.
 | category    | DBRef  | refer to the category              |
 | user        | DBRef  | refer to the user                  |
 
+### messages
+
+Description: Stores all chat messages
+
+| Column Name | Type     | Description                            |
+| ----------- | -------- | -------------------------------------- |
+| _id         | ObjectId | primary key                            |
+| content     | String   | content of the message                 |
+| user        | ObjectId | user id of the author                  |
+| room        | ObjectId | id of the room this message belongs to |
+| createdAt   | Double   | time created stored as an epoch        |
+
+
+### rooms
+
+Description: Chat room 
+
+| Column Name | Type              | Description                   |
+| ----------- | ----------------- | ----------------------------- |
+| _id         | ObjectId          | primary key                   |
+| messages    | Array\<ObjectId\> | array of all messages         |
+| postId      | ObjectId          | the post related to this room |
+
 ## URL Routes/Mapping
 
 | URL       | Page       |
@@ -91,6 +115,7 @@ Description: This table stores all the posts.
 | /newpost  | NewPost    |
 | /post     | ViewPost   |
 | /editpost | EditPost   |
+| /messages | Messages   |
 
 ## Authentication/Authorization
 
@@ -119,3 +144,6 @@ Description: This table stores all the posts.
 | View post by category    | Primary |             |              |
 | UserID's storage         |         |             | Primary      |
 | UserInfo Read/Update     |         |             | Primary      |
+| Messages                 |         | Primary     |              |
+| Heroku/Github config     |         | Primary     |              |
+| Project cleanup          |         | Primary     |              |
