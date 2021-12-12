@@ -50,7 +50,7 @@ const getPost = async () => {
 
         <!-- send message button -->
         <div class="ml-auto d-flex align-items-center pe-4">
-          <a href="#" class="text-decoration-none">
+          <a href="/messages?postId=${post._id}" class="text-decoration-none">
             <span class="font-weight-bold">
               <i class="bi bi-chat-square-dots me-1"></i>
               <span class="font-weight-bold">Send message</span>
