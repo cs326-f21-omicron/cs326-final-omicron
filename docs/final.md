@@ -48,7 +48,6 @@
 | GET    | /rooms/:roomId/messages | Get messages in room from room ID     | None                                                                                        | Required     |
 | POST   | /rooms/:roomId/message  | Create new message                    | String userId, String content                                                               | Required     |
 
-
 ## Database
 
 ### userData
@@ -93,20 +92,19 @@ Description: Stores all chat messages
 
 | Column Name | Type     | Description                            |
 | ----------- | -------- | -------------------------------------- |
-| _id         | ObjectId | primary key                            |
+| \_id        | ObjectId | primary key                            |
 | content     | String   | content of the message                 |
 | user        | ObjectId | user id of the author                  |
 | room        | ObjectId | id of the room this message belongs to |
 | createdAt   | Double   | time created stored as an epoch        |
 
-
 ### rooms
 
-Description: Chat room 
+Description: Chat room
 
 | Column Name | Type              | Description                   |
 | ----------- | ----------------- | ----------------------------- |
-| _id         | ObjectId          | primary key                   |
+| \_id        | ObjectId          | primary key                   |
 | messages    | Array\<ObjectId\> | array of all messages         |
 | postId      | ObjectId          | the post related to this room |
 
@@ -156,3 +154,4 @@ Description: Chat room
 ## Conclusion
 
 Luke: In my opinion, working with pure HTML, CSS, and client-side JS is way more difficult than it needed to be. It's very hard to share a component between sites, while dynamically loading data is equally hard.
+Hung: I think the most difficult part is to make the website responsive. I think working HTML, CSS, and JS is easier than I expected.
