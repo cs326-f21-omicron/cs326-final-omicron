@@ -480,8 +480,10 @@ app.delete('/post', async (req, res) => {
       const user = postData.user;
       const userId = JSON.stringify(user).split('"')[7];
       if (req.user._id.toString() === userId.toString()) {
+        // delete post
         await mongoClient.db().collection('posts')
           .deleteOne({ _id: postData._id });
+        // delete room along with post
         await mongoClient.db().collection('rooms')
           .deleteOne({ postId: postData._id });
         res.status(200).send({ message: 'Post deleted' });
@@ -517,65 +519,95 @@ app.get('/messages', async (req, res) => {
 
 // POST Create a new room with post ID
 app.post('/rooms', async (req, res) => {
-  const { postId } = req.body;
-
-  // set up data
-  const room = {
-    postId: ObjectId(postId),
-    messages: [],
-  };
-
   try {
+    // check authenticated
+    if (!req.isAuthenticated()) {
+      return res.status(401).send({ message: 'Not logged in' });
+    }
+
+    // check postId exists
+    const { postId } = req.body;
+    if (!postId) {
+      return res.status(400).send({ message: 'insufficient params' });
+    }
+
+    // check room existed for post
+    const roomData = await mongoClient.db().collection('rooms').findOne({
+      postId: ObjectId(postId)
+    });
+    if (roomData) {
+      res.status(400).send({ message: 'Room existed for post' });
+    }
+
     // add room to collection
+    const room = {
+      postId: ObjectId(postId),
+      messages: [],
+    };
     await mongoClient.db().collection('rooms').insertOne(room);
 
     // return result
-    res.send(room ?? {});
+    res.status(200).send({ message: 'Room created' });
   } catch (err) {
     console.log(err);
-    res.status(500).send({
-      message: 'Error',
-    });
+    res.status(500).send({ message: 'Error' });
   }
 });
 
 // GET room info by id
 app.get('/rooms/:roomId', async (req, res) => {
-  const { roomId } = req.params;
-
   try {
-    // find one room
-    const room = await mongoClient.db().collection('rooms')
-      .findOne({
-        _id: ObjectId(roomId),
-      });
+    // check authenticated
+    if (!req.isAuthenticated()) {
+      return res.status(401).send({ message: 'Not logged in' });
+    }
 
+    // check roomId exists
+    const { roomId } = req.params;
+    if (!roomId) {
+      return res.status(400).send({ message: 'insufficient params' });
+    }
+
+    // find room
+    const room = await mongoClient.db().collection('rooms')
+      .findOne({ _id: ObjectId(roomId) });
+    if (!room) {
+      res.status(400).send({ message: 'Room does not exist' });
+    }
+
+    // populate post info
     room.post = await mongoClient.db().collection('posts')
-      .findOne({
-        _id: ObjectId(room.postId)
-      });
+      .findOne({ _id: ObjectId(room.postId) });
+    if (!room.post) {
+      res.status(400).send({ message: 'Post for this room does not exist' });
+    }
 
     // return result
-    res.send(room ?? {});
+    res.status(200).send(room ?? {});
   } catch (err) {
     console.log(err);
-    res.status(500).send({
-      message: 'Error',
-    });
+    res.status(500).send({ message: 'Error' });
   }
 });
 
 
 // GET room info by postid
 app.get('/posts/:postId/room', async (req, res) => {
-  const { postId } = req.params;
-
   try {
-    // find one room
+    // check authenticated
+    if (!req.isAuthenticated()) {
+      return res.status(401).send({ message: 'Not logged in' });
+    }
+
+    // check postId exists
+    const { postId } = req.params;
+    if (!postId) {
+      return res.status(400).send({ message: 'insufficient params' });
+    }
+
+    // find room
     let room = await mongoClient.db().collection('rooms')
-      .findOne({
-        postId: ObjectId(postId),
-      });
+      .findOne({ postId: ObjectId(postId) });
 
     // a little hack
     // if post is created and room is not, then create room
@@ -587,105 +619,109 @@ app.get('/posts/:postId/room', async (req, res) => {
       await mongoClient.db().collection('rooms').insertOne(room);
     }
 
+    // populate post info
     room.post = await mongoClient.db().collection('posts')
-      .findOne({
-        _id: ObjectId(room.postId)
-      });
+      .findOne({ _id: ObjectId(room.postId) });
+    if (!room.post) {
+      res.status(400).send({ message: 'Post for this room does not exist' });
+    }
 
     // return result
-    res.send(room ?? {});
+    res.status(200).send(room ?? {});
   } catch (err) {
     console.log(err);
-    res.status(500).send({
-      message: 'Error',
-    });
+    res.status(500).send({ message: 'Error' });
   }
 });
 
 // GET room messages
 app.get('/rooms/:roomId/messages', async (req, res) => {
-  const { roomId } = req.params;
-
   try {
-    // find one room
-    const room = await mongoClient
-      .db()
-      .collection('rooms')
-      .findOne({
-        _id: ObjectId(roomId),
-      });
+    // check authenticated
+    if (!req.isAuthenticated()) {
+      return res.status(401).send({ message: 'Not logged in' });
+    }
+
+    // check roomId exists
+    const { roomId } = req.params;
+    if (!roomId) {
+      return res.status(400).send({ message: 'insufficient params' });
+    }
+
+    // find room
+    const room = await mongoClient.db().collection('rooms')
+      .findOne({ _id: ObjectId(roomId) });
+    if (!room) {
+      res.status(400).send({ message: 'Room does not exist' });
+    }
 
     // populate messages
     const messages = room.messages
-      ? await mongoClient
-        .db()
-        .collection('messages')
-        .find({
-          _id: { $in: room.messages },
-        })
+      ? await mongoClient.db().collection('messages')
+        .find({ _id: { $in: room.messages } })
         .toArray()
       : [];
 
     // add user's display name to messages
-    for (const message of messages) {
+    for (const m of messages) {
       const user = await mongoClient.db().collection('users').findOne({
-        _id: message.user,
+        _id: m.user,
       });
-      message.userDisplayName = user ? user.name : 'Unknown user';
+      m.userDisplayName = user ? user.name : 'HobbShop user';
     }
 
-    res.send(messages ?? []);
+    // return result
+    res.status(200).send(messages ?? {});
   } catch (err) {
     console.log(err);
-    res.status(500).send({
-      message: 'Error',
-    });
+    res.status(500).send({ message: 'Error' });
   }
 });
 
 // POST new message
 app.post('/rooms/:roomId/message', async (req, res) => {
-  const { roomId } = req.params;
-  const { content, userId } = req.body;
-
-  const message = {
-    content,
-    user: ObjectId(userId),
-    room: ObjectId(roomId),
-    createdAt: Date.now(),
-  };
-
   try {
+    // check authenticated
+    if (!req.isAuthenticated()) {
+      return res.status(401).send({ message: 'Not logged in' });
+    }
+
+    // check all params existed
+    const { roomId } = req.params;
+    const { content, userId } = req.body;
+    if (!(roomId && content && userId)) {
+      return res.status(400).send({ message: 'insufficient params' });
+    }
+
     // insert message
+    const message = {
+      content,
+      user: ObjectId(userId),
+      room: ObjectId(roomId),
+      createdAt: Date.now(),
+    };
     await mongoClient.db().collection('messages').insertOne(message);
 
-    // update room
-    await mongoClient
-      .db()
-      .collection('rooms')
-      .updateOne(
-        { _id: ObjectId(roomId) },
-        {
-          $push: { messages: message._id },
-        }
-      );
+    // Add message to room
+    await mongoClient.db().collection('rooms').updateOne(
+      { _id: ObjectId(roomId) },
+      { $push: { messages: message._id } }
+    );
 
     // get user's display name
     const user = await mongoClient.db().collection('users').findOne({
       _id: message.user,
     });
-    message.userDisplayName = user ? user.name : 'Unknown user';
+    message.userDisplayName = user ? user.name : 'HobbShop user';
 
-    // send update message
+    // broadcast message through socket.io
     io.to(roomId).emit('message', JSON.stringify(message));
 
-    // return message data
-    res.send(message ?? {});
+    // return result
+    res.status(200).send(message ?? {});
   } catch (err) {
     console.log(err);
-    res.status(500).send({
-      message: 'Error',
-    });
+    res.status(500).send({ message: 'Error' });
   }
 });
 

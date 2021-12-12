@@ -1,6 +1,6 @@
 # Team Omicron - Fall 2021
 
-## _HobbShop_
+## Project name: _HobbShop_
 
 [Github Repo](https://github.com/cs326-f21-omicron/cs326-final-omicron)
 
@@ -32,16 +32,22 @@
 
 ## APIs
 
-| Method | API         | Description                           | Parameters                                                                                  | Authenticate |
-| ------ | ----------- | ------------------------------------- | ------------------------------------------------------------------------------------------- | ------------ |
-| POST   | /login      | User log in                           | String username, String password                                                            | Not required |
-| POST   | /signup     | User sign up                          | String username, String password, String name                                               | Not required |
-| GET    | /logout     | User log out                          |                                                                                             | Not required |
-| POST   | /newpost    | Create a new post                     | String title, String description, String category, String image, String location            | Required     |
-| GET    | /categories | Get all categories name               |                                                                                             | Required     |
-| GET    | /posts      | Get all posts or get post by category | String id                                                                                   | Required     |
-| PUT    | /posts      | Update a post                         | String id, String title, String description, String category, String image, String location | Required     |
-| DELETE | /posts      | Delete a post                         | String id                                                                                   | Required     |
+| Method | API                     | Description                           | Parameters                                                                                  | Authenticate |
+| ------ | ----------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------- | ------------ |
+| POST   | /login                  | User log in                           | String username, String password                                                            | Not required |
+| POST   | /signup                 | User sign up                          | String username, String password, String name                                               | Not required |
+| GET    | /logout                 | User log out                          |                                                                                             | Not required |
+| POST   | /newpost                | Create a new post                     | String title, String description, String category, String image, String location            | Required     |
+| GET    | /categories             | Get all categories name               |                                                                                             | Required     |
+| GET    | /posts                  | Get all posts or get post by category | String id                                                                                   | Required     |
+| PUT    | /posts                  | Update a post                         | String id, String title, String description, String category, String image, String location | Required     |
+| DELETE | /posts                  | Delete a post                         | String id                                                                                   | Required     |
+| POST   | /rooms                  | Create a new room given post ID       | String postId                                                                               | Required     |
+| GET    | /rooms/:roomId          | Get from info from room ID            | None                                                                                        | Required     |
+| GET    | /posts/:postId/room     | Get from info from post ID            | None                                                                                        | Required     |
+| GET    | /rooms/:roomId/messages | Get messages in room from room ID     | None                                                                                        | Required     |
+| POST   | /rooms/:roomId/message  | Create new message                    | String userId, String content                                                               | Required     |
+
 
 ## Database
 
@@ -119,31 +125,34 @@ Description: Chat room
 
 ## Authentication/Authorization
 
-| Page       | Authentication | Redirect on Auth / UnAuth |
-| ---------- | -------------- | ------------------------- |
-| LadingPage | Not required   | Authorized: Home          |
-| Login      | Not required   | Authorized: Home          |
-| Signup     | Not required   | Authorized: Home          |
-| Home       | Required       | Unauthorized: Log In      |
-| NewPost    | Required       | Unauthorized: Log In      |
-| ViewPost   | Required       | Unauthorized: Log In      |
-| EditPost   | Required       | Unauthorized: Log In      |
-
-## Conclusion
+| Page        | Authentication | Redirect on Auth / UnAuth |
+| ----------- | -------------- | ------------------------- |
+| LandingPage | Not required   | Authorized: Home          |
+| Login       | Not required   | Authorized: Home          |
+| Signup      | Not required   | Authorized: Home          |
+| Home        | Required       | Unauthorized: Log In      |
+| NewPost     | Required       | Unauthorized: Log In      |
+| ViewPost    | Required       | Unauthorized: Log In      |
+| EditPost    | Required       | Unauthorized: Log In      |
+| Messages    | Required       | Unauthorized: Log In      |
 
 ## Division of labor
 
-| Part                     | Hung Do | Luke Nguyen | Kirk Smalley |
-| ------------------------ | ------- | ----------- | ------------ |
-| Sign up                  | Primary |             |              |
-| Login                    | Primary |             |              |
-| Homepage/Recommendations | Primary |             |              |
-| Create new post          | Primary |             |              |
-| Edit and delete post     | Primary |             |              |
-| View post                | Primary |             |              |
-| View post by category    | Primary |             |              |
-| UserID's storage         |         |             | Primary      |
-| UserInfo Read/Update     |         |             | Primary      |
-| Messages                 |         | Primary     |              |
-| Heroku/Github config     |         | Primary     |              |
-| Project cleanup          |         | Primary     |              |
+| Part                     | Hung Do | Luke Nguyen  | Kirk Smalley |
+| ------------------------ | ------- | ------------ | ------------ |
+| Sign up                  | Primary |              |              |
+| Login                    | Primary |              |              |
+| Homepage/Recommendations | Primary |              |              |
+| Create new post          | Primary |              |              |
+| Edit and delete post     | Primary |              |              |
+| View post                | Primary |              |              |
+| View post by category    | Primary |              |              |
+| UserID's storage         |         |              | Primary      |
+| UserInfo Read/Update     |         |              | Primary      |
+| Messages                 |         | Primary      |              |
+| Heroku/Github config     |         | Primary      |              |
+| Project cleanup          |         | Participated |              |
+
+## Conclusion
+
+Luke: In my opinion, working with pure HTML, CSS, and client-side JS is way more difficult than it needed to be. It's very hard to share a component between sites, while dynamically loading data is equally hard.
