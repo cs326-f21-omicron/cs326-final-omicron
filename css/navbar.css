@@ -10,3 +10,7 @@
 .custom-container {
   height: calc(100% - 72px);
 }
+
+.custom-font {
+  font-size: 1.5em;
+}

@@ -8,10 +8,6 @@ body {
   background-size: cover;
 }
 
-.custom-font {
-  font-size: 1.5em;
-}
-
 .nounderline {
   text-decoration: none !important;
 }
